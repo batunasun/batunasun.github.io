@@ -1,11 +1,3223 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
-    <meta charset="UTF-8">
-    <title>Миний вэб хуудас</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="charter">
+  <title>Монголын Ус цаг уурын нийгэмлэг | Mongolian Hydrometeorological Society (MonMetSoc)</title>
+
+  <!-- Typography: Libre Caslon Text & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons (Pinned Approved CDN) -->
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces */
+      --background: #f7f4ec;               /* warm cream paper */
+      --surface-container-low: #fffdf8;    /* bright leaf: figure cards, panels */
+      --surface-container: #ece5d4;        /* deeper cream: secondary buttons, filled bands */
+      --surface-container-high: #e3dac4;   /* table header band, hover fill */
+
+      /* Ink */
+      --on-surface: #1c1f26;               /* near-black ink */
+      --on-surface-variant: #4f5360;       /* graphite: captions, secondary text */
+
+      /* Rules */
+      --outline: #b08d57;                  /* brass: rules and borders; text only on navy */
+      --outline-variant: #d9cfb8;          /* pale brass: hairline dividers */
+
+      /* Accents */
+      --primary: #14213d;                  /* deep navy: title band, primary action, links */
+      --on-primary: #f7f4ec;               /* cream on navy */
+      --primary-container: #e3e6ee;        /* pale navy wash: selected row, active state */
+      --on-primary-container: #14213d;
+      --secondary: #2d5a4a;                /* bottle green: favorable notes, second voice */
+      --tertiary: #8a6a35;                 /* dark brass: small accent text on cream/leaf */
+      --error: #9b2c2c;
+      --on-error: #f7f4ec;
+
+      /* Semantics */
+      --positive: #2d5a4a;
+      --warning: #b08d57;
+      --focus: #14213d;
+
+      /* Data series */
+      --data-1: #14213d;                   /* navy */
+      --data-2: #8a6a35;                   /* dark brass */
+      --data-3: #2d5a4a;                   /* bottle green */
+      --data-4: #5b7aa0;                   /* slate blue */
+      --data-context: #c2bba9;             /* context series and gridlines */
+
+      /* Fonts */
+      --font-headline: 'Libre Caslon Text', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-label: 'Inter', sans-serif;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.125rem;
+      --rounded-full: 0.125rem;
+
+      /* Style effects */
+      --brass-rule: 2px solid var(--outline);
+      --hairline: 1px solid var(--outline-variant);
+      --leaf-underline: 0 1px 0 var(--outline-variant);
+
+      /* Type scale for narrative */
+      --display-size: clamp(2.2rem, 1.6rem + 3vw, 3.8rem);
+      --headline-size: clamp(1.6rem, 1.2rem + 1.8vw, 2.4rem);
+      --subhead-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.45rem);
+      --body-size: clamp(0.95rem, 0.92rem + 0.2vw, 1.05rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: clip;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body {
+      overflow-x: clip;
+      min-height: 100vh;
+      background-color: var(--background);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* Accessibility focus */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Typography Utilities */
+    h1, h2, h3, h4 {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--on-surface);
+    }
+
+    p {
+      margin-bottom: var(--space-md);
+      color: var(--on-surface);
+      line-height: 1.65;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--tertiary);
+      display: inline-block;
+      margin-bottom: var(--space-xs);
+    }
+
+    .kicker-on-navy {
+      color: #dfc89d;
+    }
+
+    /* Top Institutional Notification Bar */
+    .top-bulletin {
+      background: #0d1527;
+      color: #dfc89d;
+      font-size: 0.75rem;
+      padding: var(--space-xs) var(--space-lg);
+      border-bottom: 1px solid #2b3952;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .top-bulletin-items {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .top-bulletin-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .top-bulletin-item svg {
+      width: 14px;
+      height: 14px;
+      stroke: #b08d57;
+    }
+
+    /* Main Navigation Header */
+    .site-nav-wrapper {
+      background: var(--surface-container-low);
+      border-bottom: var(--brass-rule);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(20, 33, 61, 0.04);
+    }
+
+    .site-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-sm) var(--space-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo-mark {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .brand-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .brand-subtitle {
+      font-size: 0.72rem;
+      font-family: var(--font-label);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--on-surface);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: var(--space-xs) 0;
+      position: relative;
+      transition: color var(--dur-micro) var(--ease-out);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+
+    .nav-link.active::after, .nav-link:hover::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--outline);
+    }
+
+    .nav-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 1px solid var(--outline);
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+
+    .nav-cta-btn:hover {
+      background: #1e315b;
+    }
+
+    /* Defining Treatment 1: Navy Title Band */
+    .title-band {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-2xl) var(--space-xl) var(--space-2xl);
+      border-bottom: 3px solid var(--outline);
+      position: relative;
+    }
+
+    .title-band::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 35%;
+      background: radial-gradient(circle at 80% 20%, rgba(176, 141, 87, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .title-band-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
+      gap: var(--space-2xl);
+      align-items: center;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .title-band h1 {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      font-size: var(--display-size);
+      color: var(--on-primary);
+      line-height: 1.1;
+      margin-bottom: var(--space-md);
+      letter-spacing: -0.01em;
+    }
+
+    .title-band h1 span.brass-highlight {
+      color: #e5cb9b;
+      font-style: italic;
+    }
+
+    .title-band .motto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(176, 141, 87, 0.6);
+      background: rgba(176, 141, 87, 0.12);
+      color: #ebd7b3;
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--rounded);
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-md);
+    }
+
+    .title-band .lede {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: color-mix(in srgb, var(--on-primary) 82%, var(--primary));
+      margin-bottom: var(--space-xl);
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .btn-primary-charter {
+      background: #b08d57;
+      color: #14213d;
+      border: 1px solid #b08d57;
+      padding: 0.75rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border-radius: var(--rounded);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .btn-primary-charter:hover {
+      background: #c7a46d;
+      color: #0c1629;
+    }
+
+    .btn-secondary-charter {
+      background: transparent;
+      color: var(--on-primary);
+      border: 1px solid rgba(247, 244, 236, 0.45);
+      padding: 0.75rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      border-radius: var(--rounded);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .btn-secondary-charter:hover {
+      border-color: #b08d57;
+      color: #ebd7b3;
+      background: rgba(176, 141, 87, 0.1);
+    }
+
+    /* Emblem Showcase Hero Panel */
+    .hero-emblem-showcase {
+      background: rgba(255, 253, 248, 0.04);
+      border: 1px solid rgba(176, 141, 87, 0.35);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-emblem-svg-container {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto var(--space-md);
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+      transition: transform var(--dur-short) var(--ease-out);
+    }
+
+    .hero-emblem-svg-container:hover {
+      transform: scale(1.03);
+    }
+
+    .emblem-caption-title {
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      color: #ebd7b3;
+      margin-bottom: var(--space-xs);
+    }
+
+    .emblem-caption-sub {
+      font-size: 0.8rem;
+      color: #b7bece;
+      line-height: 1.45;
+    }
+
+    /* Defining Treatment 3 & 4: Figures Strip */
+    .stat-strip-section {
+      max-width: 1280px;
+      margin: calc(-1 * var(--space-lg)) auto var(--space-2xl);
+      padding: 0 var(--space-lg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .figure-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: 0 4px 16px rgba(20, 33, 61, 0.06), var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      position: relative;
+      transition: transform var(--dur-micro) var(--ease-out);
+    }
+
+    .figure-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .figure-label {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+      margin-bottom: var(--space-xs);
+    }
+
+    .figure-value {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      font-size: 2.2rem;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--primary);
+    }
+
+    .figure-delta {
+      color: var(--tertiary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .figure-delta.favorable {
+      color: var(--secondary);
+    }
+
+    /* Main Content Layout Container */
+    .content-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg) var(--space-3xl);
+    }
+
+    /* Defining Treatment 5: Brass Section Rule */
+    .section-head {
+      border-top: var(--brass-rule);
+      padding-top: var(--space-md);
+      border-bottom: var(--hairline);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-xl);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .section-head-title-group h2 {
+      font-size: var(--headline-size);
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    .section-head-meta {
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Asymmetric Grid Layouts */
+    .split-layout-main-side {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    /* Cards & Panels */
+    .leaf-panel {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+
+    .leaf-panel-inner-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Interactive Emblem Anatomy Explorer */
+    .symbol-explorer {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-top: var(--brass-rule);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .symbol-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--space-xl);
+      align-items: center;
+    }
+
+    .symbol-svg-interactive {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .symbol-svg-interactive svg {
+      width: 260px;
+      height: 260px;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+    }
+
+    .interactive-part {
+      cursor: pointer;
+      transition: filter var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+
+    .interactive-part:hover, .interactive-part.active {
+      filter: drop-shadow(0 0 6px #b08d57);
+    }
+
+    .symbol-buttons-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+
+    .symbol-btn {
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .symbol-btn:hover {
+      background: var(--surface-container-high);
+      border-color: var(--outline);
+    }
+
+    .symbol-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+
+    .symbol-detail-card {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-left: 3px solid var(--outline);
+      padding: var(--space-lg);
+      border-radius: var(--rounded);
+      min-height: 220px;
+    }
+
+    .symbol-detail-card h3 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .symbol-detail-card .author-note {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      color: var(--tertiary);
+      margin-top: var(--space-md);
+      border-top: var(--hairline);
+      padding-top: var(--space-xs);
+    }
+
+    /* Official Certificate Card (Source 3) */
+    .cert-official-card {
+      background: #fffdf8;
+      border: 2px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      position: relative;
+      box-shadow: 0 4px 18px rgba(176, 141, 87, 0.12);
+    }
+
+    .cert-seal-stamp {
+      position: absolute;
+      top: var(--space-lg);
+      right: var(--space-lg);
+      width: 72px;
+      height: 72px;
+      border: 2px dashed var(--outline);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--tertiary);
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px;
+      transform: rotate(-8deg);
+    }
+
+    .cert-header {
+      border-bottom: 1px double var(--outline);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+      max-width: 80%;
+    }
+
+    .cert-title {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .cert-sub {
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+    }
+
+    .cert-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      font-size: 0.85rem;
+    }
+
+    .cert-field-name {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+    }
+
+    .cert-field-val {
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    /* Historical Timeline */
+    .timeline-container {
+      position: relative;
+      margin-top: var(--space-lg);
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 140px;
+      width: 2px;
+      background: var(--outline-variant);
+    }
+
+    .timeline-entry {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-lg);
+      position: relative;
+    }
+
+    .timeline-date-col {
+      text-align: right;
+      font-family: var(--font-label);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--tertiary);
+      padding-top: 2px;
+    }
+
+    .timeline-card {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-left: 3px solid var(--outline);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded);
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .timeline-card::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: -28px;
+      width: 10px;
+      height: 10px;
+      background: var(--outline);
+      border: 2px solid var(--background);
+      border-radius: 50%;
+    }
+
+    .timeline-title {
+      font-family: var(--font-headline);
+      font-size: 1.08rem;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .timeline-attendees {
+      margin-top: var(--space-xs);
+      padding-top: var(--space-xs);
+      border-top: var(--hairline);
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Filterable Projects Section */
+    .project-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: var(--hairline);
+    }
+
+    .filter-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      border: 1px solid var(--outline-variant);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .filter-chip:hover {
+      background: var(--surface-container-high);
+      border-color: var(--outline);
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    .search-input-box {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      color: var(--on-surface);
+      width: 260px;
+      font-family: inherit;
+    }
+
+    .search-input-box:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .project-card {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-top: 3px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(20, 33, 61, 0.07);
+    }
+
+    .project-tag-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-xs);
+    }
+
+    .project-partner-badge {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-container);
+      padding: 2px 6px;
+      border-radius: var(--rounded);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .project-year-badge {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      color: var(--tertiary);
+      font-weight: 600;
+    }
+
+    .project-title {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+      line-height: 1.25;
+    }
+
+    .project-desc {
+      font-size: 0.86rem;
+      color: var(--on-surface-variant);
+      line-height: 1.55;
+      margin-bottom: var(--space-md);
+      flex-grow: 1;
+    }
+
+    .project-metrics-strip {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      padding: var(--space-sm);
+      border-radius: var(--rounded);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xs);
+      font-size: 0.78rem;
+    }
+
+    .project-metric-label {
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+
+    .project-metric-val {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Embedded Interactive Simulator Tool: Spring Flood Risk Calculator */
+    .calculator-panel {
+      background: var(--surface-container-low);
+      border: 2px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      margin: var(--space-2xl) 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .calculator-header {
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .calculator-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+      gap: var(--space-xl);
+    }
+
+    .control-group {
+      margin-bottom: var(--space-md);
+    }
+
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      margin-bottom: 6px;
+    }
+
+    .control-val-display {
+      font-family: var(--font-label);
+      color: var(--tertiary);
+      font-weight: 700;
+    }
+
+    .slider-charter {
+      width: 100%;
+      height: 6px;
+      accent-color: var(--primary);
+      background: var(--surface-container-high);
+      border-radius: var(--rounded);
+      cursor: pointer;
+    }
+
+    .calc-output-card {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-top: 3px solid var(--outline);
+      padding: var(--space-lg);
+      border-radius: var(--rounded);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .calc-score-display {
+      text-align: center;
+      padding: var(--space-md) 0;
+    }
+
+    .calc-large-number {
+      font-family: var(--font-headline);
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 0.25rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--rounded);
+    }
+
+    .risk-low { background: #e3efe8; color: #2d5a4a; border: 1px solid #9dc4b4; }
+    .risk-medium { background: #fcf4e4; color: #8a6a35; border: 1px solid #d9c293; }
+    .risk-high { background: #faeae9; color: #9b2c2c; border: 1px solid #e2a9a7; }
+
+    /* Interactive Bylaws / Charter Explorer */
+    .bylaws-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .bylaw-item {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      overflow: hidden;
+    }
+
+    .bylaw-toggle {
+      width: 100%;
+      text-align: left;
+      padding: var(--space-md) var(--space-lg);
+      background: transparent;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: background var(--dur-micro) var(--ease-out);
+    }
+
+    .bylaw-toggle:hover {
+      background: var(--surface-container);
+    }
+
+    .bylaw-toggle svg {
+      width: 18px;
+      height: 18px;
+      transition: transform var(--dur-micro) var(--ease-out);
+    }
+
+    .bylaw-item.open .bylaw-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    .bylaw-content {
+      display: none;
+      padding: 0 var(--space-lg) var(--space-md);
+      font-size: 0.9rem;
+      color: var(--on-surface);
+      line-height: 1.6;
+      border-top: var(--hairline);
+    }
+
+    .bylaw-item.open .bylaw-content {
+      display: block;
+    }
+
+    /* Membership Application Section */
+    .membership-section {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+
+    .membership-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .tier-card {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      cursor: pointer;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .tier-card:hover, .tier-card.selected {
+      border-color: var(--outline);
+      background: #fffdf8;
+      box-shadow: 0 2px 8px rgba(176, 141, 87, 0.15);
+    }
+
+    .tier-card.selected {
+      border-left: 4px solid var(--outline);
+    }
+
+    .tier-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .tier-title {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .tier-fee {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--tertiary);
+    }
+
+    .tier-desc {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      line-height: 1.45;
+    }
+
+    /* Form Inputs */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    .form-field-full {
+      grid-column: 1 / -1;
+    }
+
+    .charter-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .charter-form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .charter-input, .charter-select, .charter-textarea {
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: 0.6rem 0.8rem;
+      font-size: 0.88rem;
+      color: var(--on-surface);
+      font-family: inherit;
+      transition: border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .charter-input:focus, .charter-select:focus, .charter-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .charter-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-submit-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: var(--hairline);
+    }
+
+    .status-msg-box {
+      font-size: 0.82rem;
+      display: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--rounded);
+    }
+
+    .status-msg-box.success {
+      display: inline-flex;
+      background: #e6f4ea;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+
+    .status-msg-box.draft {
+      display: inline-flex;
+      background: #fef7e0;
+      color: #b06000;
+      border: 1px solid #feefc3;
+    }
+
+    /* Interactive Membership Badge Card Preview */
+    .member-preview-card {
+      background: linear-gradient(135deg, #14213d 0%, #1e335e 100%);
+      color: #f7f4ec;
+      border: 1px solid #b08d57;
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      margin-top: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(20, 33, 61, 0.25);
+    }
+
+    .member-preview-card::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      border: 1px solid rgba(176, 141, 87, 0.25);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .card-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(176, 141, 87, 0.4);
+      padding-bottom: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+
+    .card-society-name {
+      font-size: 0.72rem;
+      font-family: var(--font-label);
+      letter-spacing: 0.08em;
+      color: #dfc89d;
+      text-transform: uppercase;
+    }
+
+    .card-member-id {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #b08d57;
+    }
+
+    .card-member-name {
+      font-family: var(--font-headline);
+      font-size: 1.3rem;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .card-member-role {
+      font-size: 0.8rem;
+      color: #c9d2e5;
+      margin-bottom: var(--space-md);
+    }
+
+    .card-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 0.72rem;
+      color: #9eb0d3;
+    }
+
+    /* Contact & Official Inquiries */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.7fr);
+      gap: var(--space-2xl);
+    }
+
+    .contact-info-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .contact-info-item {
+      display: flex;
+      gap: var(--space-md);
+      align-items: flex-start;
+    }
+
+    .contact-icon-bubble {
+      width: 38px;
+      height: 38px;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .contact-icon-bubble svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .contact-label {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+
+    .contact-value {
+      font-size: 0.95rem;
+      color: var(--on-surface);
+      font-weight: 500;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #0e172a;
+      color: #c4cddf;
+      border-top: 3px solid var(--outline);
+      padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-2xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid #23314f;
+    }
+
+    .footer-brand h3 {
+      color: #f7f4ec;
+      font-size: 1.25rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: #92a0bd;
+      max-width: 48ch;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #dfc89d;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-md);
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      font-size: 0.84rem;
+    }
+
+    .footer-links a {
+      color: #9aa8c4;
+      text-decoration: none;
+      transition: color var(--dur-micro) var(--ease-out);
+    }
+
+    .footer-links a:hover {
+      color: #dfc89d;
+    }
+
+    .footer-bottom-bar {
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      font-size: 0.78rem;
+      color: #7181a3;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 960px) {
+      .title-band-container {
+        grid-template-columns: 1fr;
+      }
+      .split-layout-main-side {
+        grid-template-columns: 1fr;
+      }
+      .symbol-layout {
+        grid-template-columns: 1fr;
+      }
+      .calculator-layout {
+        grid-template-columns: 1fr;
+      }
+      .membership-grid {
+        grid-template-columns: 1fr;
+      }
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-nav-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-links {
+        display: none; /* Mobile collapse */
+      }
+      .timeline-container::before {
+        left: 20px;
+      }
+      .timeline-entry {
+        grid-template-columns: 1fr;
+        padding-left: 36px;
+      }
+      .timeline-date-col {
+        text-align: left;
+      }
+      .timeline-card::before {
+        left: -22px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Сайн байна уу!</h1>
-    <p>Энэ бол миний анхны вэб хуудас.</p>
+
+  <!-- Top Institutional Notice Ribbon -->
+  <aside class="top-bulletin" aria-label="Албан ёсны бүртгэлийн мэдээлэл">
+    <div class="top-bulletin-items">
+      <span class="top-bulletin-item">
+        <i data-lucide="shield-check" aria-hidden="true"></i>
+        <span>ХЗДХЯ-ны 287 тушаал | Гэрчилгээ №2801 | РД: 1025074</span>
+      </span>
+      <span class="top-bulletin-item">
+        <i data-lucide="calendar" aria-hidden="true"></i>
+        <span>Үүсгэн байгуулагдсан: 2002 оны 9 дүгээр сарын 19</span>
+      </span>
+    </div>
+    <div class="top-bulletin-items">
+      <span class="top-bulletin-item">
+        <i data-lucide="map-pin" aria-hidden="true"></i>
+        <span>Улаанбаатар хот, Худалдааны гудамж-5, 218 тоот</span>
+      </span>
+      <span class="top-bulletin-item">
+        <i data-lucide="globe" aria-hidden="true"></i>
+        <span>monmetsociety.org</span>
+      </span>
+    </div>
+  </aside>
+
+  <!-- Sticky Institutional Navigation Header -->
+  <header class="site-nav-wrapper">
+    <div class="site-nav-inner">
+      <a href="#home" class="brand-group" aria-label="Монголын Ус цаг уурын нийгэмлэг нүүр хуудас">
+        <!-- SVG Emblem Mark -->
+        <div class="brand-logo-mark">
+          <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
+            <circle cx="50" cy="50" r="48" fill="#14213d" stroke="#b08d57" stroke-width="2"/>
+            <circle cx="50" cy="50" r="40" fill="#ffffff" stroke="#0077b6" stroke-width="1.5"/>
+            <!-- Compass 8 points -->
+            <path d="M50 4 L53 10 L50 7 L47 10 Z" fill="#b08d57"/>
+            <path d="M50 96 L53 90 L50 93 L47 90 Z" fill="#b08d57"/>
+            <path d="M4 50 L10 53 L7 50 L10 47 Z" fill="#b08d57"/>
+            <path d="M96 50 L90 53 L93 50 L90 47 Z" fill="#b08d57"/>
+            <!-- 3 Chandmani Melmii Jewels -->
+            <path d="M50 22 C42 34 42 43 50 50 C58 43 58 34 50 22 Z" fill="#0077b6"/>
+            <path d="M30 62 C32 48 40 46 50 50 C44 58 38 66 30 62 Z" fill="#023e8a"/>
+            <path d="M70 62 C68 48 60 46 50 50 C56 58 62 66 70 62 Z" fill="#0096c7"/>
+            <circle cx="50" cy="50" r="4" fill="#f7f4ec" stroke="#b08d57" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">Монголын Ус Цаг Уурын Нийгэмлэг</span>
+          <span class="brand-subtitle">Mongolian Hydrometeorological Society (MonMetSoc)</span>
+        </div>
+      </a>
+
+      <nav aria-label="Үндсэн цэс">
+        <ul class="nav-links">
+          <li><a href="#about" class="nav-link">Бидний тухай</a></li>
+          <li><a href="#emblem" class="nav-link">Бэлгэдэл зүй</a></li>
+          <li><a href="#projects" class="nav-link">Төсөл & Судалгаа</a></li>
+          <li><a href="#calculator" class="nav-link">Үерийн загварчлал</a></li>
+          <li><a href="#charter-bylaws" class="nav-link">Дүрэм, гэрчилгээ</a></li>
+          <li><a href="#membership" class="nav-link">Гишүүнчлэл</a></li>
+          <li><a href="#contact" class="nav-link">Холбоо барих</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <a href="#membership" class="nav-cta-btn">
+          <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
+          <span>Гишүүнээр бүртгүүлэх</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Defining Treatment 1: Full-Width Navy Title Band -->
+  <section id="home" class="title-band">
+    <div class="title-band-container">
+      <div class="hero-content">
+        <div class="motto-badge">
+          <i data-lucide="sparkles" style="width:14px;height:14px;stroke:#ebd7b3;"></i>
+          <span>УРИА ҮГ: Байгаль, цаг уур, усны шинжлэх ухааны мэдлэг — Нийгмийн баялаг</span>
+        </div>
+        <span class="kicker kicker-on-navy">2002 ОНООС ХОЙШХ ТАСРАЛТГҮЙ ЗҮТГЭЛ</span>
+        <h1>Монгол орны уур амьсгал, ус цаг уурын <span class="brass-highlight">шинжлэх ухааны тэргүүлэх нэгдэл</span></h1>
+        <p class="lede">
+          Ус цаг уур, орчны хяналт-шинжилгээний шинжлэх ухаан, техник технологийн дэвшил, судалгааны үр дүнг төрийн болон хувийн хэвшил, олон улсын байгууллага, иргэдийн байнгын хэрэгцээ болгоход зөвлөх үйлчилгээ, эрдэм шинжилгээний олон талт түншлэлээр үйлчилдэг төрийн бус байгууллага.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#projects" class="btn-primary-charter">
+            <i data-lucide="folder-kanban" style="width:16px;height:16px;"></i>
+            <span>Судалгааны ажлууд үзэх</span>
+          </a>
+          <a href="#emblem" class="btn-secondary-charter">
+            <i data-lucide="compass" style="width:16px;height:16px;"></i>
+            <span>Чандмань 3 мэлмийн бэлгэдэл</span>
+          </a>
+          <a href="#charter-bylaws" class="btn-secondary-charter">
+            <i data-lucide="scroll" style="width:16px;height:16px;"></i>
+            <span>Нийгэмлэгийн дүрэм (9 зүйл)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Emblem Interactive Showcase -->
+      <div class="hero-emblem-showcase">
+        <div class="hero-emblem-svg-container" id="hero-emblem-svg-wrap">
+          <!-- Highly Accurate Vector Reproduction of SOURCE_IMAGE_1 -->
+          <svg viewBox="0 0 300 300" width="100%" height="100%" aria-label="Монголын ус цаг уурын нийгэмлэгийн албан ёсны эмблем">
+            <!-- Drop Shadow definition -->
+            <defs>
+              <filter id="emblem-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+
+            <!-- Outer Compass Directions (8 points) -->
+            <g id="compass-rays" fill="#b08d57" stroke="#8a6a35" stroke-width="0.8">
+              <!-- N -->
+              <polygon points="150,14 157,32 150,26 143,32"/>
+              <!-- S -->
+              <polygon points="150,286 157,268 150,274 143,268"/>
+              <!-- E -->
+              <polygon points="286,150 268,157 274,150 268,143"/>
+              <!-- W -->
+              <polygon points="14,150 32,157 26,150 32,143"/>
+              <!-- NE -->
+              <polygon points="246,54 233,70 236,64 228,63"/>
+              <!-- NW -->
+              <polygon points="54,54 70,63 64,64 67,70"/>
+              <!-- SE -->
+              <polygon points="246,246 228,237 236,236 233,230"/>
+              <!-- SW -->
+              <polygon points="54,246 67,230 64,236 70,237"/>
+            </g>
+
+            <!-- Dark Navy Outer Circular Band -->
+            <circle cx="150" cy="150" r="124" fill="#0d1b2a" stroke="#b08d57" stroke-width="2.5" filter="url(#emblem-glow)"/>
+
+            <!-- Circular Text Path Ring -->
+            <circle cx="150" cy="150" r="102" fill="none" stroke="#253858" stroke-width="1.5"/>
+
+            <path id="text-path-top" d="M 46,150 A 104,104 0 0,1 254,150" fill="none"/>
+            <path id="text-path-bottom" d="M 254,150 A 104,104 0 0,1 46,150" fill="none"/>
+
+            <text fill="#ffffff" font-family="'Inter', sans-serif" font-size="8.8" font-weight="700" letter-spacing="0.1em">
+              <textPath href="#text-path-top" startOffset="50%" text-anchor="middle">
+                МОНГОЛЫН УС ЦАГ УУРЫН НИЙГЭМЛЭГ
+              </textPath>
+            </text>
+            <text fill="#dfc89d" font-family="'Inter', sans-serif" font-size="7.6" font-weight="600" letter-spacing="0.14em">
+              <textPath href="#text-path-bottom" startOffset="50%" text-anchor="middle">
+                MONGOLIAN HYDROMETEOROLOGICAL SOCIETY
+              </textPath>
+            </text>
+
+            <!-- Inner White Ground Circle (Үнэн цагаан зам мөр) -->
+            <circle cx="150" cy="150" r="88" fill="#ffffff" stroke="#0077b6" stroke-width="3"/>
+
+            <!-- Atmospheric Outer Ring (Агаар мандал) -->
+            <circle cx="150" cy="150" r="82" fill="none" stroke="#90e0ef" stroke-width="1.5" stroke-dasharray="2,3"/>
+
+            <!-- Center Jewel Base (Чандмань гурван мэлмий) -->
+            <g id="chandmani-three-eyes">
+              <!-- Top Eye / Leaf (Агаар мандал - Sky Blue) -->
+              <path d="M 150,82 C 126,114 126,134 150,150 C 174,134 174,114 150,82 Z"
+                    fill="#0096c7" stroke="#023e8a" stroke-width="1.2"/>
+              <!-- Inner shading vein -->
+              <path d="M 150,88 C 142,112 144,128 150,146" fill="none" stroke="#caf0f8" stroke-width="1.5" stroke-linecap="round"/>
+
+              <!-- Left Eye / Leaf (Усан мандал - Navy Blue) -->
+              <path d="M 92,184 C 98,148 122,142 150,150 C 134,174 116,194 92,184 Z"
+                    fill="#03045e" stroke="#023e8a" stroke-width="1.2"/>
+              <!-- Inner shading vein -->
+              <path d="M 98,180 C 112,160 126,154 146,151" fill="none" stroke="#48cae4" stroke-width="1.5" stroke-linecap="round"/>
+
+              <!-- Right Eye / Leaf (Газар, Шим мандал - Azure Blue) -->
+              <path d="M 208,184 C 202,148 178,142 150,150 C 166,174 184,194 208,184 Z"
+                    fill="#0077b6" stroke="#023e8a" stroke-width="1.2"/>
+              <!-- Inner shading vein -->
+              <path d="M 202,180 C 188,160 174,154 154,151" fill="none" stroke="#ade8f4" stroke-width="1.5" stroke-linecap="round"/>
+
+              <!-- Central Pivot / Eye of Wisdom Core -->
+              <circle cx="150" cy="150" r="9" fill="#ffffff" stroke="#b08d57" stroke-width="2"/>
+              <circle cx="150" cy="150" r="4.5" fill="#14213d"/>
+            </g>
+
+            <!-- Decorative Star Dividers -->
+            <polygon points="40,150 42,152 40,154 38,152" fill="#b08d57"/>
+            <polygon points="260,150 262,152 260,154 258,152" fill="#b08d57"/>
+          </svg>
+        </div>
+        <div class="emblem-caption-title">Чандмань гурван мэлмий — Нийгэмлэгийн сүлд</div>
+        <div class="emblem-caption-sub">
+          Зураач, зохион бүтээгч Ш.Чойжил 2003 онд бүтээв. Агаар, ус, хөрсийг өнгөрсөн-одоо-ирээдүйн гурван цагт шинжих бэлгэдэл.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Defining Treatment 3 & 4: Figures and Key Metrics Strip -->
+  <section class="stat-strip-section" aria-label="Онцлох тоон үзүүлэлтүүд">
+    <div class="stat-grid">
+      <div class="figure-card">
+        <div class="figure-label">Үүсгэн байгуулагдсан</div>
+        <div class="figure-value tabular-nums">2002.09.19</div>
+        <div class="figure-delta favorable">
+          <i data-lucide="file-check-2" style="width:14px;height:14px;"></i>
+          <span>ХЗДХЯ-ны 287-р тушаал</span>
+        </div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-label">Бүртгэлийн дугаар</div>
+        <div class="figure-value tabular-nums">№ 2801</div>
+        <div class="figure-delta">
+          <i data-lucide="hash" style="width:14px;height:14px;"></i>
+          <span>Регистр: 1025074</span>
+        </div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-label">Түүхэн замнал</div>
+        <div class="figure-value tabular-nums">24+ жил</div>
+        <div class="figure-delta favorable">
+          <i data-lucide="trending-up" style="width:14px;height:14px;"></i>
+          <span>Тасралтгүй эрдэм шинжилгээ</span>
+        </div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-label">Хэрэгжүүлсэн томоохон төсөл</div>
+        <div class="figure-value tabular-nums">35+</div>
+        <div class="figure-delta favorable">
+          <i data-lucide="globe-2" style="width:14px;height:14px;"></i>
+          <span>НҮБ, ЖАЙКА, Үндэсний төслүүд</span>
+        </div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-label">Антарктид судлалын түүх</div>
+        <div class="figure-value tabular-nums">30+ жил</div>
+        <div class="figure-delta">
+          <i data-lucide="award" style="width:14px;height:14px;"></i>
+          <span>Мөсөн тивд хийсэн тэмдэглэл</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Body Content Flow -->
+  <main class="content-container">
+
+    <!-- SECTION 1: ABOUT US & HISTORY -->
+    <section id="about">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">ТҮҮХ, ЭРХЭМ ЗОРИЛГО БА БҮТЭЦ</span>
+          <h2>Бидний тухай & Түүхэн замнал</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>Төрийн бус байгууллагын хуулийн дагуу нийгэмд үйлчлэх ТББ</span>
+        </div>
+      </div>
+
+      <div class="split-layout-main-side">
+        <!-- Main Column -->
+        <div>
+          <div class="leaf-panel">
+            <h3 class="leaf-panel-inner-title">Нийгэмлэгийн үндсэн зорилго, үйл ажиллагааны чиглэл</h3>
+            <p>
+              <strong>Монголын ус цаг уурын нийгэмлэг (МУЦН)</strong> нь ус цаг уур, орчны хяналт-шинжилгээний шинжлэх ухаан, техник технологи болон судалгаа шинжилгээний мэдээ мэдээлэл, үр дүнд үндэслэсэн зөвлөх үйлчилгээгээр өмчийн бүх хэлбэрийн байгууллага, иргэдийн байнгын хэрэгцээг хангахад тус дөхөм үзүүлэх зорилго бүхий нийгэмд үйлчилдэг төрийн бус байгууллага юм.
+            </p>
+            <p>
+              2002 оны 8 дугаар сараас Д.Цээсодролцоо, Д.Түвдэndorж, Р.Оюун, Ц.Адъяасүрэн, Б.Мягмаржав нар дүрмийн төслийг санаачлан боловсруулж, 2002 оны 9 дүгээр сарын 19-ний өдөр санаачлагч 17 эрдэмтэн судлаачдын анхдугаар хурлаар дүрмээ батлан үүсгэн байгуулжээ.
+            </p>
+
+            <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: var(--hairline);">
+              <h4 style="font-size: 1.05rem; font-weight:700; color:var(--primary); margin-bottom:var(--space-sm);">
+                Үйл ажиллагааны үндсэн 5 чиглэл (Дүрэм 2.2):
+              </h4>
+              <ul style="padding-left: 1.25rem; font-size: 0.92rem; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>1. Мэдээллийн үр өгөөжийг нэмэгдүүлэх:</strong> Аж ахуйн нэгж, малчид, иргэдэд цаг агаар, ус, орчны төрөл бүрийн мэдээллээр шуурхай үйлчлэх арга хэлбэрийг боловсронгуй болгох.</li>
+                <li><strong>2. Захиалгат судалгаа шинжилгээ:</strong> Байгууллага, иргэдийн хүсэлтээр бичил цаг уур, хөрсний чийгшил, үерийн аюул, бэлчээрийн экологийн хяналт шинжилгээ хийх.</li>
+                <li><strong>3. Эрдэмтдийн бүтээлийг түгээн дэлгэрүүлэх:</strong> Судлаачдын бүтээл, шинжлэх ухааны ололтыг гадаад, дотоодод сурталчлах, үйлдвэрлэл практикт нэвтрүүлэх.</li>
+                <li><strong>4. Залгамж чанар ба мэргэжлийн өсөлт:</strong> Ахмад болон залуу үеийн холбоог бэхжүүлэх, залуу боловсон хүчнийг мэргэшүүлэх, тэдний нийтлэг эрх ашгийг хамгаалах.</li>
+                <li><strong>5. Олон талт хамтын ажиллагаа:</strong> Төрийн болон олон улсын байгууллагуудтай хамтран уур амьсгалын өөрчлөлт, цөлжилт, дасан зохицох стратегийн төслүүдийг хэрэгжүүлэх.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Historic Milestones Interactive Flow -->
+          <div class="leaf-panel">
+            <h3 class="leaf-panel-inner-title">Түүхийн он дараалал ба голлох үйл явдлууд (2002–2026)</h3>
+            <p style="font-size: 0.88rem; color: var(--on-surface-variant);">
+              Тус нийгэмлэгийн архивын баримтууд болон түүхэн тэмдэглэлд тулгуурласан он дарааллын товчоон:
+            </p>
+
+            <div class="timeline-container">
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2002.08.03–10</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">Нийгэмлэгийн дүрмийн төсөл боловсруулалт</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    Д.Цээсодролцоо нийгэмлэгийн дүрмийн төслийг боловсруулж Д.Түвдэndorж, Р.Оюун, Ц.Адъяасүрэн, Б.Мягмаржав нартай зөвлөлдөн санаачлагчдыг цуглуулах шийдэлд хүрэв.
+                  </p>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2002.09.19</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">Санаачлагчдын анхдугаар хурал & Удирдах зөвлөл</div>
+                  <p style="font-size:0.86rem;">
+                    17 эрдэмтэн оролцсон хурлаар 9 зүйлтэй дүрэм баталж, нууц санал хураалтаар Ц.Адъяасүрэнг 62.5%-ийн саналаар анхны Ерөнхийлөгчөөр сонгов.
+                  </p>
+                  <div class="timeline-attendees">
+                    <strong>Санаачлагчдын бүрэлдэхүүн:</strong> Н.Лувсанбямбаа, Д.Цээсодролцоо, Л.Нацагдорж, Ш.Санжпэрлээ, Д.Түвдэndorж, Э.Найдан, Д.Чогсом, Ч.Пунцагдорж, Л.Жамбажамц, Ц.Сүрэнжав, Д.Даваадорж, Д.Чулуунбат, Д.Хоржав, Б.Мягмаржав, З.Батжаргал, Ц.Адъяасүрэн, Р.Оюун.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2002.12.12</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">Улсын бүртгэлийн №2801 гэрчилгээ & Антарктид 30 жил</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    Хууль зүй, дотоод хэргийн яамнаас албан ёсны гэрчилгээ гардан авав. Мөн өдөр Монгол хүн анх Антарктид тивд очсоны 30 жилийн ойг тэмдэглэж "Мөсөн тивд хийсэн тэмдэглэл", "Манай Цэрэндэлэг" номуудыг хэвлүүлэв.
+                  </p>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2003.10.01</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">“Эрдэнэ шугуй” төсөл (Дундговь, Эрдэнэдалай)</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    НҮБ-ын Даян Дэлхийн Байгаль Орчны Сангийн жижиг төслийн хөтөлбөрөөр говь хээрийн бүсийн цөлжилттэй тэмцэх 2 га талбайд 2900 гаруй бургас тарьж, гүний худаг, усалгааны нэгдсэн систем байгуулав.
+                  </p>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2003.11.18</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">Нийгэмлэгийн албан ёсны эмблем батлагдав</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    Уралдаанд ирсэн бүтээлүүдээс зураач Ш.Чойжилын "Чандмань гурван мэлмий" зохиомжийг нийгэмлэгийн сүлдээр сонгон батлав.
+                  </p>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2004 оны хавар</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">УБТЗ-ын төмөр замын 22 байгууламжийн үерийн тооцоо</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    Улаанбаатар-Дархан, Салхит-Эрдэнэтийн чиглэлд их цасны хайллагаас үүсэх шар усны үерийн урьдчилсан мэдээ, ус зүйн тооцоолох шинэлэг аргазүйг амжилттай нэвтрүүлэв.
+                  </p>
+                </div>
+              </div>
+
+              <div class="timeline-entry">
+                <div class="timeline-date-col">2015–2026</div>
+                <div class="timeline-card">
+                  <div class="timeline-title">НҮБХХ-ийн ADAPT, NAP, JICA болон Олон улсын төслүүд</div>
+                  <p style="font-size:0.86rem; margin-bottom:0;">
+                    Монгол орны уур амьсгалын өөрчлөлтөд дасан зохицох үндэсний төлөвлөгөө (NAP006), малчдын эрсдэлийн менежмент (ADAPT), Улаанбаатар хотын агаарын чанарын менежментийн төслүүдэд үндэсний зөвлөхөөр тасралтгүй ажиллаж байна.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <aside>
+          <!-- Official Registration Document Card -->
+          <div class="cert-official-card" style="margin-bottom: var(--space-xl);">
+            <div class="cert-seal-stamp">
+              <span>ХЗДХЯ</span>
+              <span>БҮРТГЭВ</span>
+              <span>2002</span>
+            </div>
+            <div class="cert-header">
+              <span class="kicker">АЛБАН ЁСНЫ БАРИМТ БИЧИГ</span>
+              <div class="cert-title">Улсын Бүртгэлийн Гэрчилгээ</div>
+              <div class="cert-sub">Монгол Улсын Хууль Зүй, Дотоод Хэргийн Яам</div>
+            </div>
+
+            <div class="cert-meta-grid">
+              <div>
+                <div class="cert-field-name">Гэрчилгээний дугаар</div>
+                <div class="cert-field-val tabular-nums">№ 2801</div>
+              </div>
+              <div>
+                <div class="cert-field-name">Регистрийн дугаар</div>
+                <div class="cert-field-val tabular-nums">1025074</div>
+              </div>
+              <div>
+                <div class="cert-field-name">Сайдын тушаал</div>
+                <div class="cert-field-val">2002 оны 287-р тушаал</div>
+              </div>
+              <div>
+                <div class="cert-field-name">Бүртгэсэн огноо</div>
+                <div class="cert-field-val tabular-nums">2002.12.12</div>
+              </div>
+            </div>
+
+            <p style="font-size:0.8rem; color:var(--on-surface-variant); border-top:var(--hairline); padding-top:var(--space-sm);">
+              <strong>Хуулийн статус:</strong> Төрийн бус байгууллагын хуулийн 10 дугаар зүйлийн дагуу бүртгэгдсэн, ашгийн төлөө бус, нийгэмд үйлчилдэг бие даасан хуулийн этгээд.
+            </p>
+          </div>
+
+          <!-- Leadership & Founders Box -->
+          <div class="leaf-panel" style="padding: var(--space-lg);">
+            <span class="kicker">УДИРДЛАГА & ЗОХИОН БАЙГУУЛАЛТ</span>
+            <h4 style="font-size: 1.15rem; color:var(--primary); margin-bottom:var(--space-sm);">Удирдах Зөвлөлийн бүтэц</h4>
+            <p style="font-size: 0.84rem; color:var(--on-surface-variant);">
+              Нийгэмлэгийн эрх барих дээд байгууллага нь 7 гишүүнтэй Удирдах зөвлөл бөгөөд Хяналтын 3 гишүүнтэй зөвлөл хяналт тавьдаг.
+            </p>
+
+            <div style="font-size: 0.82rem; margin-top:var(--space-sm); display:flex; flex-direction:column; gap:8px;">
+              <div style="background:#faf8f2; padding:8px; border-left:3px solid var(--outline);">
+                <strong>Ерөнхийлөгч:</strong> Проф. Ц.Адъяасүрэн (Анхны болон хүндэт тэргүүн)
+              </div>
+              <div style="background:#faf8f2; padding:8px; border-left:3px solid var(--outline);">
+                <strong>Дэд ерөнхийлөгч:</strong> Д.Түвдэndorж (Байгаль орчны гавьяат ажилтан)
+              </div>
+              <div style="background:#faf8f2; padding:8px; border-left:3px solid var(--outline);">
+                <strong>Гүйцэтгэх удирдлага:</strong> Д.Цээсодролцоо (Үүсгэн байгуулагч, тэргүүн)
+              </div>
+              <div style="background:#faf8f2; padding:8px; border-left:3px solid var(--outline);">
+                <strong>Удирдах зөвлөлийн гишүүд:</strong> Р.Оюун, Л.Нацагдорж, Г.Даваа, Ч.Пунцагдорж, А.Намхай, Г.Баясгалан
+              </div>
+              <div style="background:#faf8f2; padding:8px; border-left:3px solid var(--secondary);">
+                <strong>Хяналтын алба:</strong> 3 хүний бүрэлдэхүүнтэйгээр санхүү, дүрмийн хэрэгжилтэд байнгын хяналт тавьдаг.
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SECTION 2: EMBLEM & DEEP SYMBOLISM (ЧАНДМАНЬ ГУРВАН МЭЛМИЙ) -->
+    <section id="emblem" style="margin-top: var(--space-2xl);">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">БЭЛГЭДЭЛ ЗҮЙН ГҮН ТАЙЛБАР</span>
+          <h2>Чандмань гурван мэлмийн бэлгэдэл ба шинжлэх ухааны утга учир</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>Ш.Чойжил (Олон улсын уралдааны шагналт зураач, 2003)</span>
+        </div>
+      </div>
+
+      <div class="symbol-explorer">
+        <div class="symbol-layout">
+          <!-- Interactive SVG Mark -->
+          <div class="symbol-svg-interactive">
+            <svg viewBox="0 0 260 260" width="220" height="220" aria-label="Чандмань бэлгэдэл">
+              <!-- Compass Rays Outer (click to explore) -->
+              <g id="svg-part-compass" class="interactive-part" onclick="selectSymbolPart('compass')">
+                <polygon points="130,10 136,26 130,20 124,26" fill="#b08d57"/>
+                <polygon points="130,250 136,234 130,240 124,234" fill="#b08d57"/>
+                <polygon points="250,130 234,136 240,130 234,124" fill="#b08d57"/>
+                <polygon points="10,130 26,136 20,130 26,124" fill="#b08d57"/>
+                <polygon points="214,46 202,60 205,55 198,54" fill="#b08d57"/>
+                <polygon points="46,46 60,54 55,55 58,60" fill="#b08d57"/>
+                <polygon points="214,214 198,206 205,205 202,200" fill="#b08d57"/>
+                <polygon points="46,214 58,200 55,205 60,206" fill="#b08d57"/>
+              </g>
+
+              <!-- Outer Navy Ring (click to explore) -->
+              <circle id="svg-part-ring" class="interactive-part" cx="130" cy="130" r="108" fill="#14213d" stroke="#b08d57" stroke-width="2" onclick="selectSymbolPart('ring')"/>
+
+              <!-- White Base Ground (click to explore) -->
+              <circle id="svg-part-base" class="interactive-part" cx="130" cy="130" r="82" fill="#ffffff" stroke="#0077b6" stroke-width="2.5" onclick="selectSymbolPart('base')"/>
+
+              <!-- Atmospheric Halo -->
+              <circle cx="130" cy="130" r="76" fill="none" stroke="#90e0ef" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+              <!-- Top Eye: Air / Sky (click to explore) -->
+              <path id="svg-part-eye-air" class="interactive-part" d="M 130,65 C 108,94 108,114 130,130 C 152,114 152,94 130,65 Z"
+                    fill="#0096c7" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('air')"/>
+
+              <!-- Left Eye: Water (click to explore) -->
+              <path id="svg-part-eye-water" class="interactive-part" d="M 76,162 C 82,128 104,122 130,130 C 114,152 98,172 76,162 Z"
+                    fill="#03045e" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('water')"/>
+
+              <!-- Right Eye: Earth & Land (click to explore) -->
+              <path id="svg-part-eye-land" class="interactive-part" d="M 184,162 C 178,128 156,122 130,130 C 146,152 162,172 184,162 Z"
+                    fill="#0077b6" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('land')"/>
+
+              <!-- Center Point: Wisdom (click to explore) -->
+              <circle id="svg-part-center" class="interactive-part" cx="130" cy="130" r="8" fill="#ffffff" stroke="#b08d57" stroke-width="2" onclick="selectSymbolPart('wisdom')"/>
+              <circle cx="130" cy="130" r="3.5" fill="#14213d"/>
+            </svg>
+            <span style="font-size:0.75rem; color:var(--tertiary); margin-top:8px; font-weight:600;">
+              Дүрс дээр товшиж тайлбарыг үзнэ үү
+            </span>
+          </div>
+
+          <!-- Interactive Information Description -->
+          <div>
+            <div class="symbol-buttons-bar">
+              <button class="symbol-btn active" id="btn-sym-air" onclick="selectSymbolPart('air')">1. Агаар мандал (Дээд мэлмий)</button>
+              <button class="symbol-btn" id="btn-sym-water" onclick="selectSymbolPart('water')">2. Усан мандал (Зүүн мэлмий)</button>
+              <button class="symbol-btn" id="btn-sym-land" onclick="selectSymbolPart('land')">3. Шим, газар (Баруун мэлмий)</button>
+              <button class="symbol-btn" id="btn-sym-wisdom" onclick="selectSymbolPart('wisdom')">4. Оюун ухаан & 3 цаг</button>
+              <button class="symbol-btn" id="btn-sym-base" onclick="selectSymbolPart('base')">5. Цагаан суурь</button>
+              <button class="symbol-btn" id="btn-sym-compass" onclick="selectSymbolPart('compass')">6. 4 зүг, 8 зовхис</button>
+              <button class="symbol-btn" id="btn-sym-ring" onclick="selectSymbolPart('ring')">7. Цэнхэр дугуй хүрээ</button>
+            </div>
+
+            <div class="symbol-detail-card" id="symbol-detail-display">
+              <h3 id="symbol-card-title">
+                <i data-lucide="cloud-sun" style="width:20px;height:20px;stroke:#0096c7;"></i>
+                <span>Агаар мандал ба Цаг уурын шинжлэх ухаан</span>
+              </h3>
+              <p id="symbol-card-desc">
+                Чандмань гурван мэлмийн оройд орших дээш тэмүүлсэн дөл/мэлмийн дүрс нь манай дэлхийг бүрхэн орших агаар мандал, цаг агаарын төлөв байдал, салхи шуурга, хур тунадас, уур амьсгалын хувьслыг бүхэлд нь шинжлэн таних сансар, агаарын судалгааг төлөөлнө.
+              </p>
+              <div class="author-note" id="symbol-card-footnote">
+                Зохиогчийн тайлбар: "Бурхан багшийг гэгээрэхэд гурав дахь мэлмий нь тэнгэрээс заяасан... Энэ гурван мэлмийгээр агаар, ус, газар гэсэн санааг илтгэнэ."
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: STRATEGIC PROJECTS & RESEARCH REPOSITORY -->
+    <section id="projects" style="margin-top: var(--space-2xl);">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">СУДАЛГАА, ШИНЖИЛГЭЭ БА ОЛОН ТАЛТ ХАМТЫН АЖИЛЛАГАА</span>
+          <h2>Төсөл ба судалгааны ажлын сан</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>НҮБХХ, ЖАЙКА, БОАЖЯ, УБТЗ болон салбарын түншлэл</span>
+        </div>
+      </div>
+
+      <!-- Controls: Category Filters & Search -->
+      <div class="project-controls-bar">
+        <div class="filter-btn-group" role="tablist" aria-label="Төслийн ангиллын шүүлтүүр">
+          <button class="filter-chip active" onclick="filterProjects('all')">Бүх төслүүд (<span id="count-all">9</span>)</button>
+          <button class="filter-chip" onclick="filterProjects('climate')">Уур амьсгалын өөрчлөлт & Дасан зохицол</button>
+          <button class="filter-chip" onclick="filterProjects('water')">Усны нөөц & Шар усны үер</button>
+          <button class="filter-chip" onclick="filterProjects('air')">Агаарын чанар & Мониторинг</button>
+          <button class="filter-chip" onclick="filterProjects('desert')">Цөлжилт & Орон нутаг</button>
+        </div>
+
+        <input type="text" id="project-search" class="search-input-box" placeholder="Төслийн нэрээр хайх..." oninput="searchProjects(this.value)">
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="projects-grid" id="projects-container">
+        <!-- Rendered dynamically by script for rich interactivity -->
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTERACTIVE FOCUSED SIMULATOR TOOL -->
+    <section id="calculator" style="margin-top: var(--space-2xl);">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">ИНТЕРАКТИВ ТООЦООЛОХ ХЭРЭГСЭЛ</span>
+          <h2>Хаврын шар усны үер & Цасны хайллагын эрсдэлийн загварчлал</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>Нийгэмлэгийн Төмөр замын 22 байгууламжид зориулан хөгжүүлсэн аргазүйд суурилав</span>
+        </div>
+      </div>
+
+      <div class="calculator-panel">
+        <div class="calculator-header">
+          <h3 style="font-size:1.2rem; color:var(--primary); font-weight:700; margin-bottom:4px;">
+            Ус нэвтрүүлэх хиймэл байгууламжийн ачаалал тооцоолуур
+          </h3>
+          <p style="font-size:0.86rem; color:var(--on-surface-variant); margin-bottom:0;">
+            Улаанбаатар-Дархан, Салхит-Эрдэнэтийн төмөр зам, авто замын ус нэвтрүүлэх хоолойнуудын өнгөрүүлэх чадвар, цасны зузаан, хаврын дулаарлын хурдад тулгуурлан үерийн оргил урсац болон эрсдэлийн ангиллыг урьдчилан загварчлах багаж.
+          </p>
+        </div>
+
+        <div class="calculator-layout">
+          <!-- Inputs Column -->
+          <div>
+            <div class="control-group">
+              <label for="calc-snow-depth">
+                <span>Цасан бүрхүүлийн дундаж зузаан:</span>
+                <span id="disp-snow-depth" class="control-val-display tabular-nums">18 см</span>
+              </label>
+              <input type="range" id="calc-snow-depth" class="slider-charter" min="2" max="60" value="18" step="1" oninput="updateFloodModel()">
+            </div>
+
+            <div class="control-group">
+              <label for="calc-temp-rate">
+                <span>Хаврын дулаарах хурд (хоногийн дундаж өсөлт):</span>
+                <span id="disp-temp-rate" class="control-val-display tabular-nums">+4.5 °C / хоног</span>
+              </label>
+              <input type="range" id="calc-temp-rate" class="slider-charter" min="0.5" max="10.0" value="4.5" step="0.5" oninput="updateFloodModel()">
+            </div>
+
+            <div class="control-group">
+              <label for="calc-soil-frost">
+                <span>Хөрсний хөлдөлтийн гүн & чийгшил:</span>
+                <span id="disp-soil-frost" class="control-val-display">Өндөр хөлдөлттэй (Нэвчилт бага)</span>
+              </label>
+              <select id="calc-soil-frost" class="charter-select" style="width:100%;" onchange="updateFloodModel()">
+                <option value="1.3">Гүн хөлдөлттэй / Мөстэй (Нэвчилт 15% - Урсац маш өндөр)</option>
+                <option value="1.0" selected>Ердийн хөлдөлттэй (Нэвчилт 35% - Урсац дунд)</option>
+                <option value="0.7">Хөнгөн хөлдөлттэй элсэрхэг (Нэвчилт 60% - Урсац бага)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="calc-culvert-cap">
+                <span>Ус нэвтрүүлэх хоолойн хүчин чадал:</span>
+                <span id="disp-culvert-cap" class="control-val-display tabular-nums">12.0 м³/сек</span>
+              </label>
+              <input type="range" id="calc-culvert-cap" class="slider-charter" min="3.0" max="30.0" value="12.0" step="0.5" oninput="updateFloodModel()">
+            </div>
+          </div>
+
+          <!-- Outputs Column -->
+          <div class="calc-output-card">
+            <div>
+              <span class="kicker">ТООЦООЛСӨН УРЬДЧИЛСАН ҮР ДҮН</span>
+              <h4 style="font-size:1.1rem; color:var(--primary); font-weight:700;">Хаврын шар усны оргил урсац</h4>
+            </div>
+
+            <div class="calc-score-display">
+              <div id="calc-peak-flow" class="calc-large-number tabular-nums">9.8 м³/с</div>
+              <div style="font-size:0.85rem; color:var(--on-surface-variant); margin-bottom:var(--space-sm);">
+                Хоолойн дүүргэлтийн хувь: <strong id="calc-fill-pct" class="tabular-nums" style="color:var(--primary);">81.7%</strong>
+              </div>
+              <div id="calc-risk-badge" class="risk-badge risk-medium">АНХААРУУЛАХ ТҮВШИН</div>
+            </div>
+
+            <div id="calc-recommendation" style="font-size:0.82rem; color:var(--on-surface); background:#ffffff; border:1px solid var(--outline-variant); padding:var(--space-sm); border-radius:var(--rounded);">
+              Шар усны хайллага хоолойн хүчин чадлын 80%-ийг давж байгаа тул төмөр замын далан, ус хаях хоолойн амсрыг мөс, хагшааснаас яаралтай чөлөөлөх хяналтын баг томилохыг зөвлөж байна.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: CHARTER & BYLAWS (ДҮРЭМ, 9 ЗҮЙЛ) -->
+    <section id="charter-bylaws" style="margin-top: var(--space-2xl);">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">ЭРХ ЗҮЙН БАРИМТ БИЧИГ</span>
+          <h2>Монголын ус цаг уурын нийгэмлэгийн дүрэм (9 зүйл)</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>Үүсгэн байгуулагчдын 2002 оны 9-р сарын 19-ний хурлаар баталсан</span>
+        </div>
+      </div>
+
+      <div class="bylaws-accordion" id="bylaws-container">
+        <!-- Bylaw Item 1 -->
+        <div class="bylaw-item open">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Нэг. Нийтлэг үндэслэл (Дүрэм 1.1 – 1.9)</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>1.1.</strong> “Монголын ус цаг уурын нийгэмлэг” төрийн бус байгууллага нь Төрийн бус байгууллагын тухай хууль, энэхүү дүрмийг үйл ажиллагаандаа мөрдлөг болгон ажиллах нийгэмд үйлчилдэг, ашгийн төлөө бус төрийн бус байгууллага мөн.</p>
+            <p><strong>1.2. Оноосон нэр:</strong> “Монголын ус цаг уурын нийгэмлэг” (цаашид МУЦН гэж товчилно). Англи нэршил: Mongolian Hydrometeorological Society (MonMetSoc).</p>
+            <p><strong>1.3. Байршлын хаяг:</strong> Улаанбаатар 210646. Худалдааны гудамж-5. Ус цаг уур, орчны шинжилгээний газрын байр. №218 тоот өрөө. Утас: (+976) 11-312458.</p>
+            <p><strong>1.8–1.9.</strong> МУЦН-ийн үйл ажиллагаа болон санхүүгийн тайлан нь нийтэд ил тод, нээлттэй байх ба холбогдох хуулийн хугацаанд тайлагнана.</p>
+          </div>
+        </div>
+
+        <!-- Bylaw Item 2 -->
+        <div class="bylaw-item">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Хоёр. Нийгэмлэгийн зорилго, үйл ажиллагаа (Дүрэм 2.1 – 2.2)</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>2.1.1. Зорилго:</strong> Нийгэмлэг нь ус цаг уур, орчны хяналт шинжилгээний шинжлэх ухаан, техник технологийн болон бусад мэдээллийг өмчийн бүх хэлбэрийн байгууллага, иргэдийн байнгын хэрэгцээ болгоход тус дөхөм үзүүлэхэд оршино.</p>
+            <p><strong>2.2. Үйл ажиллагааны үндсэн чиглэлүүд:</strong> Мэдээллийн үр өгөөжийг дээшлүүлэх; захиалгаар нарийвчилсан судалгаа хийх; эрдэмтдийн бүтээлийг дотоод, гадаадад сурталчлах; ахмад болон залуу үеийн залгамж холбоог хангах; төр, олон улсын байгууллагын даалгавраар тодорхой судалгаа шинжилгээний төсөл хэрэгжүүлэх.</p>
+          </div>
+        </div>
+
+        <!-- Bylaw Item 3 -->
+        <div class="bylaw-item">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Гурав. Бүтэц, удирдлага, хяналтын тогтолцоо (Дүрэм 3.1 – 3.2)</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>3.1.2.</strong> Нийгэмлэгийн эрх барих дээд байгууллага нь 7 хүний бүрэлдэхүүнтэй Удирдах зөвлөл байна.</p>
+            <p><strong>3.1.3–3.1.4.</strong> Удирдах зөвлөлийн хурлаас нийгэмлэгийн Ерөнхийлөгчийг сонгоно. Удирдах зөвлөлийн гишүүн нь нийгэмлэгийн Ерөнхийлөгч байж болно.</p>
+            <p><strong>3.2. Хяналтын алба:</strong> Нийгэмлэгийн хяналтын алба 3 гишүүний бүрэлдэхүүнтэй байх бөгөөд гишүүдийн санал гомдол, санхүү хөрөнгийн зарцуулалтад тогтмол хяналт тавина.</p>
+          </div>
+        </div>
+
+        <!-- Bylaw Item 4 -->
+        <div class="bylaw-item">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Дөрөв & Тав. Удирдах зөвлөл ба Ерөнхийлөгчийн бүрэн эрх</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>Удирдах зөвлөлийн бүрэн эрх:</strong> Дүрэмд нэмэлт өөрчлөлт оруулах, төсөв төлөвлөгөө батлах, Гүйцэтгэх захирлыг томилох/чөлөөлөх, гишүүдийн татварын хэмжээг тогтоох, Хүндэт гишүүн өргөмжлөх.</p>
+            <p><strong>Ерөнхийлөгчийн бүрэн эрх:</strong> Нийгэмлэгийг гадаад, дотоодод төлөөлөх, Удирдах зөвлөлийн хурлыг даргалах, үйл ажиллагааг нэгдсэн удирдлагаар хангах, Гүйцэтгэх захиралтай гэрээ байгуулах.</p>
+          </div>
+        </div>
+
+        <!-- Bylaw Item 5 -->
+        <div class="bylaw-item">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Зургаа & Долоо. Гүйцэтгэх удирдлага & Санхүүжилт</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>Гүйцэтгэх захирлын эрх:</strong> Өдөр тутмын үйл ажиллагааг зохион байгуулах, олгосон эрх хэмжээний хүрээнд өмч хөрөнгийг захиран зарцуулах, гишүүд дэмжигчдийн хүрээг өргөтгөх, санхүүг бэхжүүлэх.</p>
+            <p><strong>Санхүүжилт (Дүрэм 7):</strong> Гишүүдийн татвар, иргэд, ААН-ийн хандив дэмжлэг, дүрэмд нийцсэн судалгаа шинжилгээний гэрээт ажлын орлого, олон улсын болон төрийн төсөл хөтөлбөрийн санхүүжилт.</p>
+          </div>
+        </div>
+
+        <!-- Bylaw Item 6 -->
+        <div class="bylaw-item">
+          <button class="bylaw-toggle" onclick="toggleBylaw(this)">
+            <span>Найм. Бусад зүйл (Хүндэт гишүүн, Шагнал, Хэвлэл)</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="bylaw-content">
+            <p><strong>8.1. Хүндэт гишүүн:</strong> Монголын ус цаг уур, орчны шинжилгээний салбарт дорвитой хувь нэмэр оруулсан, бүтээл туурвисан Монголын болон гадаадын иргэнийг Удирдах зөвлөлийн шийдвэрээр Хүндэт гишүүнээр өргөмжилнө.</p>
+            <p><strong>8.2–8.3.</strong> Нийгэмлэг нь өөрийн сонин, эрдэм шинжилгээний цуврал бүтээл, “Оны шилдэг судлаач”, “Оны хүн” зэрэг албан ёсны шагналтай байна.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: MEMBERSHIP APPLICATION PORTAL -->
+    <section id="membership" class="membership-section">
+      <div class="section-head" style="margin-bottom: var(--space-lg); border-top:none; padding-top:0;">
+        <div class="section-head-title-group">
+          <span class="kicker">ЭРДЭМТЭД, МЭРГЭЖИЛТНҮҮДИЙН НЭГДЭЛ</span>
+          <h2>Гишүүнчлэлийн бүртгэл & Өргөдөл гаргах</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>Цахим бүртгэлийн систем (State Persistence бэлэн)</span>
+        </div>
+      </div>
+
+      <div class="membership-grid">
+        <!-- Membership Categories / Left -->
+        <div>
+          <h4 style="font-size:1.1rem; color:var(--primary); font-weight:700;">Гишүүнчлэлийн ангилал сонгох</h4>
+          <p style="font-size:0.84rem; color:var(--on-surface-variant);">
+            Өөрийн мэргэжил, туршлагад тохирох ангиллыг сонгон өргөдлөө илгээнэ үү. Манай Удирдах зөвлөл хүлээн авч баталгаажуулна.
+          </p>
+
+          <div class="tier-list">
+            <div class="tier-card selected" id="tier-regular" onclick="selectTier('Үндсэн гишүүн (Мэргэжлийн цаг уурч, ус судлаач)')">
+              <div class="tier-title-row">
+                <span class="tier-title">Үндсэн гишүүн</span>
+                <span class="tier-fee">Жилийн хураамж: 25,000₮</span>
+              </div>
+              <div class="tier-desc">
+                Ус цаг уур, орчны шинжилгээний мэргэжилтэй судлаач, инженер, их дээд сургуулийн багш, шинжээчид.
+              </div>
+            </div>
+
+            <div class="tier-card" id="tier-young" onclick="selectTier('Залуу судлаач / Оюутан гишүүн')">
+              <div class="tier-title-row">
+                <span class="tier-title">Залуу судлаач / Оюутан</span>
+                <span class="tier-fee">Жилийн хураамж: 10,000₮</span>
+              </div>
+              <div class="tier-desc">
+                Их дээд сургуулийн бакалавр, магистрант, докторант, салбарт 5 хүртэл жил ажиллаж буй залуу боловсон хүчин.
+              </div>
+            </div>
+
+            <div class="tier-card" id="tier-corp" onclick="selectTier('Хамтрагч байгууллагын гишүүн')">
+              <div class="tier-title-row">
+                <span class="tier-title">Байгууллагын гишүүн</span>
+                <span class="tier-fee">Гэрээт нөхцөлөөр</span>
+              </div>
+              <div class="tier-desc">
+                Ус цаг уурын мэдээлэл хэрэглэгч ААН, төсөл хөтөлбөрийн нэгж, хөдөө аж ахуй, уул уурхай, барилгын компаниуд.
+              </div>
+            </div>
+
+            <div class="tier-card" id="tier-honor" onclick="selectTier('Хүндэт гишүүн (Салбарын ахмад, гавьяат зүтгэлтэн)')">
+              <div class="tier-title-row">
+                <span class="tier-title">Хүндэт гишүүн</span>
+                <span class="tier-fee">Татвараас чөлөөлөгдөнө</span>
+              </div>
+              <div class="tier-desc">
+                Салбарт олон жил үр бүтээлтэй ажилласан ахмад эрдэмтэн, төр нийгмийн зүтгэлтэн, гадаадын түнш эрдэмтэд.
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Virtual Membership Card Preview -->
+          <div class="member-preview-card" aria-label="Гишүүний үнэмлэх урьдчилан харах">
+            <div class="card-head-row">
+              <span class="card-society-name">Монголын Ус Цаг Уурын Нийгэмлэг</span>
+              <span class="card-member-id" id="card-id-disp">№ MMS-2026-089</span>
+            </div>
+            <div class="card-member-name" id="card-name-disp">Таны нэр энд харагдана</div>
+            <div class="card-member-role" id="card-role-disp">Үндсэн гишүүн | Цаг уур, орчны судлаач</div>
+            <div class="card-footer-row">
+              <span id="card-org-disp">Байгууллага: Судалгааны байгууллага</span>
+              <span>monmetsociety.org</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Form / Right -->
+        <div>
+          <form id="membership-form" onsubmit="handleMembershipSubmit(event)">
+            <input type="hidden" id="form-tier-val" value="Үндсэн гишүүн (Мэргэжлийн цаг уурч, ус судлаач)">
+
+            <div class="form-grid">
+              <div class="charter-form-group">
+                <label for="m-lastname">Овог</label>
+                <input type="text" id="m-lastname" class="charter-input" placeholder="Жишээ: Батбаяр" required oninput="updateLiveCard()">
+              </div>
+
+              <div class="charter-form-group">
+                <label for="m-firstname">Өөрийн нэр</label>
+                <input type="text" id="m-firstname" class="charter-input" placeholder="Жишээ: Тэмүүлэн" required oninput="updateLiveCard()">
+              </div>
+
+              <div class="charter-form-group">
+                <label for="m-reg">Регистрийн дугаар</label>
+                <input type="text" id="m-reg" class="charter-input" placeholder="Жишээ: УБ85041212" required>
+              </div>
+
+              <div class="charter-form-group">
+                <label for="m-phone">Холбогдох утас</label>
+                <input type="tel" id="m-phone" class="charter-input" placeholder="Жишээ: 99112233" required>
+              </div>
+
+              <div class="charter-form-group form-field-full">
+                <label for="m-email">Цахим шуудан (И-мэйл)</label>
+                <input type="email" id="m-email" class="charter-input" placeholder="Жишээ: name@example.mn" required>
+              </div>
+
+              <div class="charter-form-group form-field-full">
+                <label for="m-workplace">Одоо ажиллаж буй байгууллага, албан тушаал</label>
+                <input type="text" id="m-workplace" class="charter-input" placeholder="Жишээ: УЦУОШГ, төслийн зөвлөх инженер" required oninput="updateLiveCard()">
+              </div>
+
+              <div class="charter-form-group form-field-full">
+                <label for="m-field">Судалгаа шинжилгээний сонирхдог чиглэл</label>
+                <select id="m-field" class="charter-select" onchange="updateLiveCard()">
+                  <option value="Цаг уур & Тоон загварчлал">Цаг уур & Тоон урьдчилсан мэдээ, загварчлал</option>
+                  <option value="Ус зүй & Үерийн эрсдэл">Ус судлал, гадаргын ба газрын доорх ус, шар усны үер</option>
+                  <option value="Уур амьсгалын өөрчлөлт & Дасан зохицол">Уур амьсгалын өөрчлөлт & Эрсдэлийн дасан зохицол</option>
+                  <option value="Агаарын чанарын мониторинг">Агаарын чанар, тоосонцор ба бохирдлын судалгаа</option>
+                  <option value="Агроцаг уур & Бэлчээр">Агроцаг уур, хөрсний чийгшил, ган зудын эрсдэл</option>
+                  <option value="Хиймэл дагуул & Алсын зайн тандан судалгаа">Хиймэл дагуул & Зайнаас тандан судлал (RS/GIS)</option>
+                </select>
+              </div>
+
+              <div class="charter-form-group form-field-full">
+                <label for="m-bio">Мэргэжлийн товч танилцуулга & Гишүүнээр элсэх зорилго</label>
+                <textarea id="m-bio" class="charter-textarea" placeholder="Таны боловсрол, салбарт ажилласан туршлага, нийгэмлэгийн үйл ажиллагаанд хэрхэн оролцох талаар..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-submit-row">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button type="submit" class="btn-primary-charter" id="submit-btn">
+                  <i data-lucide="send" style="width:16px;height:16px;"></i>
+                  <span>Өргөдөл илгээх</span>
+                </button>
+                <button type="button" class="btn-secondary-charter" style="color:var(--primary); border-color:var(--outline-variant);" onclick="saveApplicationDraft()">
+                  <i data-lucide="save" style="width:14px;height:14px;"></i>
+                  <span>Ноорог хадгалах</span>
+                </button>
+              </div>
+
+              <span id="form-feedback" class="status-msg-box"></span>
+            </div>
+          </form>
+
+          <!-- History of Saved Application State -->
+          <div id="saved-state-banner" style="display:none; margin-top:var(--space-md); padding:var(--space-md); background:#faf8f2; border:1px solid var(--outline-variant); border-radius:var(--rounded); font-size:0.82rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:var(--primary);">Хадгалагдсан өргөдлийн төлөв:</strong>
+                <span id="saved-summary-text" style="color:var(--on-surface-variant); margin-left:6px;"></span>
+              </div>
+              <button onclick="clearSavedDraft()" style="background:none; border:none; color:var(--error); cursor:pointer; font-size:0.75rem; text-decoration:underline;">
+                Цэвэрлэх
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: CONTACT & OFFICIAL ADDRESS -->
+    <section id="contact" style="margin-top: var(--space-2xl);">
+      <div class="section-head">
+        <div class="section-head-title-group">
+          <span class="kicker">АЛБАН ТАСРАЛТГҮЙ БАЙРШИЛ</span>
+          <h2>Холбоо барих & Хамтын ажиллагаа</h2>
+        </div>
+        <div class="section-head-meta">
+          <span>УЦУОШГ-ын төв байр 218 тоот өрөө</span>
+        </div>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Contact Information List -->
+        <div>
+          <p style="font-size:0.92rem; color:var(--on-surface-variant); margin-bottom:var(--space-lg);">
+            Нийгэмлэгийн эрдэм шинжилгээ, зөвлөх үйлчилгээ, төсөл судалгаанд хамтран ажиллах хүсэлт болон санал сэтгэгдлээ бидэнд илгээнэ үү.
+          </p>
+
+          <ul class="contact-info-list">
+            <li class="contact-info-item">
+              <div class="contact-icon-bubble">
+                <i data-lucide="map-pin"></i>
+              </div>
+              <div>
+                <div class="contact-label">Албан ёсны хаяг байршил</div>
+                <div class="contact-value">
+                  Монгол Улс, Улаанбаатар хот 210646, Худалдааны гудамж-5, Ус цаг уур, орчны шинжилгээний газрын төв байр, 218 тоот
+                </div>
+              </div>
+            </li>
+
+            <li class="contact-info-item">
+              <div class="contact-icon-bubble">
+                <i data-lucide="phone"></i>
+              </div>
+              <div>
+                <div class="contact-label">Холбогдох утас</div>
+                <div class="contact-value tabular-nums">(+976) 11-312458 / (+976) 9911-XXXX</div>
+              </div>
+            </li>
+
+            <li class="contact-info-item">
+              <div class="contact-icon-bubble">
+                <i data-lucide="mail"></i>
+              </div>
+              <div>
+                <div class="contact-label">Цахим шуудан</div>
+                <div class="contact-value">info@monmetsociety.org / monmetsoc@gmail.com</div>
+              </div>
+            </li>
+
+            <li class="contact-info-item">
+              <div class="contact-icon-bubble">
+                <i data-lucide="globe"></i>
+              </div>
+              <div>
+                <div class="contact-label">Албан ёсны веб сайт</div>
+                <div class="contact-value">https://monmetsociety.org</div>
+              </div>
+            </li>
+
+            <li class="contact-info-item">
+              <div class="contact-icon-bubble">
+                <i data-lucide="file-badge"></i>
+              </div>
+              <div>
+                <div class="contact-label">Улсын бүртгэлийн албан дугаар</div>
+                <div class="contact-value tabular-nums">№ 2801, Регистр: 1025074</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Quick Inquiry Message Box -->
+        <div class="leaf-panel" style="margin-bottom:0;">
+          <h4 style="font-size:1.15rem; color:var(--primary); font-weight:700; margin-bottom:var(--space-xs);">
+            Нийгэмлэгт хандан санал, хүсэлт илгээх
+          </h4>
+          <p style="font-size:0.82rem; color:var(--on-surface-variant); margin-bottom:var(--space-md);">
+            Төслийн зөвлөх үйлчилгээ авах, хамтран ажиллах саналыг хүлээн авч холбогдох эрдэмтэн, нарийн бичгийн даргатай холбоно.
+          </p>
+
+          <form id="inquiry-form" onsubmit="handleInquirySubmit(event)">
+            <div class="charter-form-group" style="margin-bottom:var(--space-sm);">
+              <label for="inq-name">Таны нэр эсвэл Байгууллага</label>
+              <input type="text" id="inq-name" class="charter-input" placeholder="Байгууллагын нэр эсвэл өөрийн нэр" required>
+            </div>
+
+            <div class="charter-form-group" style="margin-bottom:var(--space-sm);">
+              <label for="inq-contact">Утас эсвэл И-мэйл хаяг</label>
+              <input type="text" id="inq-contact" class="charter-input" placeholder="Харилцах утас, имэйл" required>
+            </div>
+
+            <div class="charter-form-group" style="margin-bottom:var(--space-sm);">
+              <label for="inq-topic">Хүсэлтийн төрөл</label>
+              <select id="inq-topic" class="charter-select">
+                <option value="research">Судалгаа шинжилгээ, зөвлөх үйлчилгээ</option>
+                <option value="data">Уур амьсгал, ус цаг уурын тоон мэдээллийн асуулга</option>
+                <option value="membership">Гишүүнчлэл, татвар, хамтын ажиллагаа</option>
+                <option value="other">Бусад албан асуудал</option>
+              </select>
+            </div>
+
+            <div class="charter-form-group" style="margin-bottom:var(--space-md);">
+              <label for="inq-msg">Санал хүсэлтийн утга</label>
+              <textarea id="inq-msg" class="charter-textarea" placeholder="Таны хүсэлт, хамтын ажиллагааны зорилго..." required></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <button type="submit" class="btn-primary-charter">
+                <i data-lucide="send" style="width:14px;height:14px;"></i>
+                <span>Хүсэлт илгээх</span>
+              </button>
+              <span id="inquiry-feedback" class="status-msg-box"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h3>МОНГОЛЫН УС ЦАГ УУРЫН НИЙГЭМЛЭГ</h3>
+        <p>
+          Монголын ус цаг уур, орчны хяналт-шинжилгээний шинжлэх ухаан, техник технологийн дэвшлийг нийгмийн баялаг, тогтвортой хөгжлийн баталгаа болгоход чиглэсэн нийгэмд үйлчилдэг төрийн бус байгууллага.
+        </p>
+        <div style="font-size:0.75rem; color:#8495b5; margin-top:var(--space-md);">
+          Хууль зүй дотоод хэргийн сайдын 2002 оны 287 дугаар тушаалаар бүртгэсэн. Улсын бүртгэлийн дугаар: 2801.
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Холбоос цэс</h4>
+        <ul class="footer-links">
+          <li><a href="#about">Нийгэмлэгийн тухай & Түүх</a></li>
+          <li><a href="#emblem">Чандмань бэлгэдэл зүй</a></li>
+          <li><a href="#projects">Төсөл ба судалгааны сан</a></li>
+          <li><a href="#calculator">Үерийн тооцоолуур</a></li>
+          <li><a href="#charter-bylaws">Дүрмийн 9 зүйл заалт</a></li>
+          <li><a href="#membership">Гишүүнчлэлийн бүртгэл</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Албан хаяг</h4>
+        <div style="font-size:0.82rem; color:#9aa8c4; line-height:1.6;">
+          Улаанбаатар хот 210646,<br>
+          Худалдааны гудамж-5,<br>
+          УЦУОШГ-ын төв байр 218 тоот өрөө.<br>
+          Утас: (+976) 11-312458<br>
+          Веб: monmetsociety.org
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div>
+        © 2002–2026 Монголын Ус цаг уурын нийгэмлэг (MonMetSoc). Бүх эрх хуулиар хамгаалагдсан.
+      </div>
+      <div>
+        Эрдэм шинжилгээ • Нийгэмд үйлчлэх хүрээ • Байгаль орчны хамгаалал
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mandatory Gemini Notebook Shim Tag -->
+  <api-shim></api-shim>
+
+  <!-- Interactive JavaScript Application Logic -->
+  <script>
+    // ==========================================
+    // 1. DATA REPOSITORY: PROJECTS & RESEARCH
+    // ==========================================
+    const PROJECTS_DATABASE = [
+      {
+        id: `adapt-undp`,
+        category: `climate`,
+        title: `Монгол орны хөдөөгийн иргэдийн уур амьсгалын өөрчлөлтөд дасан зохицох чадамж болон эрсдэлийн менежмент (ADAPT)`,
+        partner: `UNDP, GCP`,
+        year: `2022–2025`,
+        desc: `Хөдөөгийн малчдын уур амьсгалын эрсдэлийг бууруулах, байгалийн гамшиг (ган, зуд)-т тэсвэртэй дасан зохицох арга хэмжээний үнэлгээ, зөвлөх үйлчилгээ (c_PROF/2022/013).`,
+        metric1Label: `Хамрах хүрээ`,
+        metric1Val: `Хөдөөгийн 4 бүс нутаг`,
+        metric2Label: `Үр дүн`,
+        metric2Val: `Дасан зохицох төлөвлөгөө`
+      },
+      {
+        id: `nap006-undp`,
+        category: `climate`,
+        title: `Уур амьсгалын өөрчлөлтөд дасан зохицох төлөвлөлтийн үндэсний чадавхыг бэхжүүлэх төсөл (NAP006)`,
+        partner: `UNDP, GCP`,
+        year: `2021–2024`,
+        desc: `Уур амьсгалын үндэсний төлөвлөлтийн процессыг боловсронгуй болгох, салбарын эрдэмтэд, бодлого боловсруулагчдын чадавхыг үнэлэх зөвлөх үйлчилгээ.`,
+        metric1Label: `Төслийн код`,
+        metric1Val: `NAP006 Үндэсний төсөл`,
+        metric2Label: `Хэрэгжүүлэлт`,
+        metric2Val: `Үндэсний чадавхын тайлан`
+      },
+      {
+        id: `unep-clean-air`,
+        category: `air`,
+        title: `Агаарын чанарын үнэлгээ Ази, Номхон далайн эрүүл мэнд, хөгжлийн бодлогын төлөө`,
+        partner: `НҮБ-ын Байгаль орчны хөтөлбөр (UNEP)`,
+        year: `2020–2023`,
+        desc: `Ази, Номхон далайн орнуудын Цэвэр агаар түншлэлийн хүрээнд Монгол орны агаарын бохирдол, хүн амын эрүүл мэндийн эрсдэлийг тооцсон олон улсын судалгаа.`,
+        metric1Label: `Хамтрагч`,
+        metric1Val: `UNEP Clean Air Partnership`,
+        metric2Label: `Шинжилгээ`,
+        metric2Val: `PM2.5 & Эрүүл мэндийн загвар`
+      },
+      {
+        id: `jica-air-quality`,
+        category: `air`,
+        title: `Улаанбаатар хотын агаарын чанарын хяналт-шинжилгээ, сайжруулах чадавхыг бэхжүүлэх (III шат)`,
+        partner: `JICA (Япон улс)`,
+        year: `2018–2022`,
+        desc: `Нийслэл хотын харуул станцуудын хэмжилтийн нарийвчлалыг сайжруулах, ялгаралтын эх үүсвэрийн тооллого хийх, үндэсний мэргэжилтнүүдийг сургаж чадавхжуулах төсөл.`,
+        metric1Label: `Үе шат`,
+        metric1Val: `III үе шат (JICA)`,
+        metric2Label: `Түлхүүр үр дүн`,
+        metric2Val: `Хяналтын автомат сүлжээ`
+      },
+      {
+        id: `german-air-mgmt`,
+        category: `air`,
+        title: `Монгол Улсын агаарын чанарын үнэлгээ, менежмент зөвлөх төсөл`,
+        partner: `Герман улсын Засгийн газар`,
+        year: `2017–2019`,
+        desc: `Агаарын бохирдлын эх үүсвэрийн менежмент, хууль эрх зүйн орчны шинэчлэлд нийгэмлэгийн эрдэмтэн, зөвлөхүүдийн гүйцэтгэсэн иж бүрэн үнэлгээний төсөл.`,
+        metric1Label: `Төрөл`,
+        metric1Val: `Зөвлөх тусламж`,
+        metric2Label: `Хэрэгжүүлэгч`,
+        metric2Val: `Германы зөвлөх баг`
+      },
+      {
+        id: `railway-spring-flood`,
+        category: `water`,
+        title: `Төмөр замын хойд чиглэлийн 22 хиймэл байгууламжийн шар усны үерийн урьдчилсан мэдээ`,
+        partner: `УБТЗ Замын алба`,
+        year: `2004`,
+        desc: `Улаанбаатар-Дархан, Салхит-Эрдэнэтийн төмөр замын дагуу цасны зузаан, хайллага, гидрологийн загварчлал боловсруулж шар усны үерийн прогнозоор үйлчилсэн.`,
+        metric1Label: `Байгууламжийн тоо`,
+        metric1Val: `22 ус нэвтрүүлэх цэг`,
+        metric2Label: `Үр ашиг`,
+        metric2Val: `Ослын эрсдэл 0%`
+      },
+      {
+        id: `erdene-shugui-gef`,
+        category: `desert`,
+        title: `“Эрдэнэ шугуй” цөлжилттэй тэмцэх, бургас тариалах төсөл (Дундговь, Эрдэнэдалай)`,
+        partner: `НҮБ-ын Даян Дэлхийн Байгаль Орчны Сан (GEF/SGP)`,
+        year: `2003–2005`,
+        desc: `Хээрийн бүсэд 2 га хамгаалалтын хашаа, 2900+ Халхгол, Туул, Орхоны бургасны суулгац, 200м гүний худагтайгаар мод тарьж цөлжилтийг сааруулсан үлгэр жишээ төсөл.`,
+        metric1Label: `Талбайн хэмжээ`,
+        metric1Val: `2.0 га хамгаалалттай`,
+        metric2Label: `Тариалсан мод`,
+        metric2Val: `2,900 гаруй суулгац`
+      },
+      {
+        id: `pasture-herders-jemr`,
+        category: `desert`,
+        title: `Байгаль цаг уурын өөрчлөлт малчин өрхийн амьжиргаанд хэрхэн нөлөөлсөн нь & Ган, зудын судалгаа`,
+        partner: `Сангийн яам, ЖЭМР ХХК`,
+        year: `2000–2003`,
+        desc: `Завхан, Төв, Дундговь, Хэнтий, Булган аймагт болсон ган зуд, уур амьсгалын сав шим тогтолцооны өртөмтгий байдлыг судлан эдийн засгийн хохирлын үнэлгээ хийв.`,
+        metric1Label: `Хамрагдсан аймаг`,
+        metric1Val: `5 аймаг, 30+ сум`,
+        metric2Label: `Судалгааны төрөл`,
+        metric2Val: `Өрхийн амьжиргааны үнэлгээ`
+      },
+      {
+        id: `protected-areas-tech`,
+        category: `climate`,
+        title: `Тусгай хамгаалалттай газар нутагт алсын удирдлагатай хяналтын камер, нарны зайн шийдэл`,
+        partner: `БОАЖЯ (Төсөл/2024090402)`,
+        year: `2024–2025`,
+        desc: `ТХГН-ийн экосистемийн төлөв байдал, зэрлэг амьтдын шилжилт хөдөлгөөн, цаг уурын бичил орчныг алсаас тасралтгүй хянах автомат системийн техникийн зөвлөх үйлчилгээ.`,
+        metric1Label: `Захиалагч`,
+        metric1Val: `БОАЖЯ зөвлөх үйлчилгээ`,
+        metric2Label: `Технологи`,
+        metric2Val: `Нарны эрчим хүч & Камер`
+      }
+    ];
+
+    // ==========================================
+    // 2. EMBLEM SYMBOLISM DATA
+    // ==========================================
+    const SYMBOL_DATA = {
+      air: {
+        title: `Агаар мандал ба Цаг уурын шинжлэх ухаан (Дээд мэлмий)`,
+        icon: `cloud-sun`,
+        color: `#0096c7`,
+        desc: `Чандмань гурван мэлмийн оройд орших дээш тэмүүлсэн дөл/мэлмийн дүрс нь манай дэлхийг бүрхэн орших агаар мандал, цаг агаарын төлөв байдал, салхи шуурга, хур тунадас, уур амьсгалын хувьслыг бүхэлд нь шинжлэн таних сансар, агаарын судалгааг төлөөлнө.`,
+        note: `Зохиогчийн тайлбар: "Бурхан багшийг гэгээрэхэд гурав дахь мэлмий нь тэнгэрээс заяасан... Энэ гурван мэлмийгээр агаар, ус, газар гэсэн санааг илтгэнэ."`
+      },
+      water: {
+        title: `Усан мандал ба Гидрологийн шинжлэх ухаан (Зүүн мэлмий)`,
+        icon: `droplets`,
+        color: `#03045e`,
+        desc: `Зүүн талын цэнхэр мэлмий нь манай гаригийн амьдралыг тэтгэгч гол мөрөн, нуур, булаг шанд, мөстөл, газрын доорх усны нөөц, усан мандлын эргэлтийн хууль зүйг тандан судлах ус судлалын шинжлэх ухааны бэлгэдэл юм.`,
+        note: `Зохиогчийн тайлбар: "Ус нь амьдралын үүсвэр төдийгүй шар усны үер, ган, хуурайшлын үндсэн хүчин зүйл болдог."`
+      },
+      land: {
+        title: `Шим мандал, хөрс ба Экологи (Баруун мэлмий)`,
+        icon: `sprout`,
+        color: `#0077b6`,
+        desc: `Баруун талын ногоон туяат цэнхэр мэлмий нь хөрс, ургамал бүрхэвч, бэлчээр, ойн экосистем болон цөлжилт, газрын доройтлоос хамгаалах шим мандлын тэнцвэрт байдлыг илэрхийлнэ. Мөн гурван навч хэлбэртэйгээр байгалийн ногоон өнгийг давхар билэгддэг.`,
+        note: `Зохиогчийн тайлбар: "Гурван мэлмийг өөр утгаар авч үзвэл гурван навч хэлбэртэй харагдана (экологи ба байгаль орчин)."`
+      },
+      wisdom: {
+        title: `Хүний оюун ухаан ба Цаг хугацааны 3 хэмжээс (Төв цөм)`,
+        icon: `eye`,
+        color: `#14213d`,
+        desc: `Төвийн цөм цэг нь аливаа зүйлийн ӨНГӨРСӨН, ОДОО, ИРЭЭДҮЙ-г сайн муутай нь нэвт харах эрдэмтэн хүний хараа, оюун ухааны чадавхыг илтгэнэ. Компьютер, электроникийн өнөөгийн эринд ч хүний оюун оролцохгүйгээр байгалийн төлөвийг зөв тодорхойлох аргагүй юм гэсэн гүн ухаан шингэсэн.`,
+        note: `Зохиогчийн тайлбар: "Электроникийн өнөөгийн эринд ч хүний хараа, оюун ухааны оролцоогүйгээр цаг уурын байдлыг зөв тодорхойлохын аргагүй юм."`
+      },
+      base: {
+        title: `Үнэн цагаан зам мөр (Цагаан дэвсгэр суурь)`,
+        icon: `shield`,
+        color: `#785008`,
+        desc: `Гурван мэлмийг байрлуулсан үнэн цагаан суурь нь Монголын ус цаг уурын нийгэмлэг нь өөрийн бүх үйл ажиллагааг шинжлэх ухааны ёс зүйтэй, шударга, үнэн цагаан зам мөрөөр явуулна гэсэн бэлгэдэл агуулдаг.`,
+        note: `Зохиогчийн тайлбар: "Тус нийгэмлэг нь өөрийн үйл ажиллагаагаа шударга, үнэн цагаан зам мөрөөр явуулна гэсэн санааг бэлгэджээ."`
+      },
+      compass: {
+        title: `4 зүг, 8 зовхисын ажиглалтын сүлжээ (Цацраг)`,
+        icon: `compass`,
+        color: `#b08d57`,
+        desc: `Эмблемийн гадна хүрээний 8 зовхис дахь шар алтан цацрагууд нь Монгол орны болон дэлхийн өнцөг булан бүрт 24 цагийн турш тасралтгүй явагдаж буй ус цаг уурын хэмжилт, харуул станцуудын ажиглалт, арга технологийн сүлжээг төлөөлнө.`,
+        note: `Зохиогчийн тайлбар: "Дөрвөн зүг, найман зовхист цаг уурын шинжилгээний ажиглалт хийх буюу хэмжилт, ажиглалтын арга технологийг илэрхийлэв."`
+      },
+      ring: {
+        title: `Дэлхий ертөнц ба Агаар мандлын цагираг (Цэнхэр хүрээ)`,
+        icon: `globe`,
+        color: `#14213d`,
+        desc: `Нийгэмлэгийн монгол, англи нэр бичигдсэн гадаад гүн цэнхэр дугуй хүрээ нь бидний эх дэлхий болон түүнийг хамгаалагч агаарын бүрхүүлийг илэрхийлдэг.`,
+        note: `Зохиогчийн тайлбар: "Цэнхэр дугуй хүрээ нь манай дэлхийг хүрээлэх агаар мандлыг мөн адил давхар илэрхийлнэ."`
+      }
+    };
+
+    // Global state object
+    let appState = {
+      activeCategory: 'all',
+      searchQuery: '',
+      floodInputs: {
+        snowDepth: 18,
+        tempRate: 4.5,
+        soilFrost: 1.0,
+        culvertCap: 12.0
+      },
+      savedApplication: null
+    };
+
+    // ==========================================
+    // 3. LIFECYCLE & APP PERSISTENCE
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', async function() {
+      // 1. Initialize Icons
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
+      }
+
+      // 2. Render Projects
+      renderProjects();
+
+      // 3. Initialize Flood Model
+      updateFloodModel();
+
+      // 4. Restore Persisted State from Gemini Notebook Shim API
+      if (window.notebookAppApi && window.notebookAppApi.getAppState) {
+        try {
+          const loadedState = await window.notebookAppApi.getAppState();
+          if (loadedState) {
+            if (loadedState.savedApplication) {
+              appState.savedApplication = loadedState.savedApplication;
+              restoreFormFromState(loadedState.savedApplication);
+            }
+            if (loadedState.floodInputs) {
+              appState.floodInputs = loadedState.floodInputs;
+              restoreFloodModelInputs(loadedState.floodInputs);
+            }
+          }
+        } catch (err) {
+          console.warn('Could not restore state:', err);
+        }
+      }
+
+      // 5. Notify host system
+      if (window.notebookAppApi && window.notebookAppApi.notifyAppReady) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    });
+
+    // ==========================================
+    // 4. EMBLEM INTERACTIVE INSPECTOR
+    // ==========================================
+    function selectSymbolPart(partKey) {
+      const data = SYMBOL_DATA[partKey];
+      if (!data) return;
+
+      // Update Detail Display
+      const titleEl = document.getElementById('symbol-card-title');
+      const descEl = document.getElementById('symbol-card-desc');
+      const noteEl = document.getElementById('symbol-card-footnote');
+
+      if (titleEl) {
+        titleEl.innerHTML = `<i data-lucide="${data.icon}" style="width:20px;height:20px;stroke:${data.color};"></i><span>${data.title}</span>`;
+      }
+      if (descEl) descEl.textContent = data.desc;
+      if (noteEl) noteEl.textContent = data.note;
+
+      // Update Buttons
+      const buttons = document.querySelectorAll('.symbol-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-sym-${partKey}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Update SVG part styles
+      const parts = document.querySelectorAll('.interactive-part');
+      parts.forEach(p => p.classList.remove('active'));
+      const activeSvgPart = document.getElementById(`svg-part-${partKey}`) ||
+                            document.getElementById(`svg-part-eye-${partKey}`);
+      if (activeSvgPart) activeSvgPart.classList.add('active');
+
+      // Re-initialize Lucide Icons for dynamic icon
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
+      }
+    }
+
+    // ==========================================
+    // 5. PROJECTS REPOSITORY FILTER & SEARCH
+    // ==========================================
+    function filterProjects(category) {
+      appState.activeCategory = category;
+
+      // Update active chip
+      const chips = document.querySelectorAll('.filter-chip');
+      chips.forEach(chip => {
+        const text = chip.textContent.toLowerCase();
+        if (category === 'all' && text.includes('бүх')) {
+          chip.classList.add('active');
+        } else if (category === 'climate' && text.includes('уур амьсгал')) {
+          chip.classList.add('active');
+        } else if (category === 'water' && text.includes('усны нөөц')) {
+          chip.classList.add('active');
+        } else if (category === 'air' && text.includes('агаарын чанар')) {
+          chip.classList.add('active');
+        } else if (category === 'desert' && text.includes('цөлжилт')) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+
+      renderProjects();
+    }
+
+    function searchProjects(query) {
+      appState.searchQuery = query.toLowerCase().trim();
+      renderProjects();
+    }
+
+    function renderProjects() {
+      const container = document.getElementById('projects-container');
+      if (!container) return;
+
+      const filtered = PROJECTS_DATABASE.filter(item => {
+        const matchesCategory = (appState.activeCategory === 'all') || (item.category === appState.activeCategory);
+        const matchesSearch = !appState.searchQuery ||
+          item.title.toLowerCase().includes(appState.searchQuery) ||
+          item.desc.toLowerCase().includes(appState.searchQuery) ||
+          item.partner.toLowerCase().includes(appState.searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: var(--space-xl); text-align: center; background: var(--surface-container-low); border: 1px dashed var(--outline-variant); border-radius: var(--rounded);">
+            <i data-lucide="search-x" style="width: 32px; height: 32px; stroke: var(--tertiary); margin: 0 auto var(--space-sm);"></i>
+            <h4 style="font-size: 1.1rem; color: var(--primary);">Тохирох төсөл олдсонгүй</h4>
+            <p style="font-size: 0.85rem; color: var(--on-surface-variant); margin-top: 4px;">Та шүүлтүүр эсвэл хайлтын түлхүүр үгээ өөрчлөн дахин оролдоно уу.</p>
+          </div>
+        `;
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
+        <article class="project-card" id="card-${item.id}">
+          <div>
+            <div class="project-tag-row">
+              <span class="project-partner-badge">${item.partner}</span>
+              <span class="project-year-badge">${item.year}</span>
+            </div>
+            <h3 class="project-title">${item.title}</h3>
+            <p class="project-desc">${item.desc}</p>
+          </div>
+          <div class="project-metrics-strip">
+            <div>
+              <div class="project-metric-label">${item.metric1Label}</div>
+              <div class="project-metric-val">${item.metric1Val}</div>
+            </div>
+            <div>
+              <div class="project-metric-label">${item.metric2Label}</div>
+              <div class="project-metric-val">${item.metric2Val}</div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
+      }
+    }
+
+    // ==========================================
+    // 6. SPRING FLOOD RUNOFF CALCULATOR
+    // ==========================================
+    function updateFloodModel() {
+      const snowEl = document.getElementById('calc-snow-depth');
+      const tempEl = document.getElementById('calc-temp-rate');
+      const frostEl = document.getElementById('calc-soil-frost');
+      const capEl = document.getElementById('calc-culvert-cap');
+
+      if (!snowEl || !tempEl || !frostEl || !capEl) return;
+
+      const snow = parseFloat(snowEl.value);
+      const temp = parseFloat(tempEl.value);
+      const frost = parseFloat(frostEl.value);
+      const culvertCap = parseFloat(capEl.value);
+
+      // Update Labels
+      const dispSnow = document.getElementById('disp-snow-depth');
+      const dispTemp = document.getElementById('disp-temp-rate');
+      const dispCap = document.getElementById('disp-culvert-cap');
+
+      if (dispSnow) dispSnow.textContent = `${snow} см`;
+      if (dispTemp) dispTemp.textContent = `+${temp.toFixed(1)} °C / хоног`;
+      if (dispCap) dispCap.textContent = `${culvertCap.toFixed(1)} м³/сек`;
+
+      // Hydrometeorological formula developed for Mongolian conditions:
+      // Peak runoff Q = Area_coeff * (Snow_water_equiv * Melt_intensity * Frost_runoff_coeff)
+      // Reference standard: 1 cm snow ~ 2.2 mm water equivalent in high density spring crust
+      const snowWaterEq = snow * 2.2; // mm
+      const meltIntensity = temp * 1.8; // mm/day
+      const baseAreaRunoffFactor = 0.055; // for typical railway catchment micro-basin
+
+      const peakFlow = (snowWaterEq * (meltIntensity / 24) * frost * baseAreaRunoffFactor).toFixed(1);
+      const fillPercentage = ((parseFloat(peakFlow) / culvertCap) * 100).toFixed(1);
+
+      // Update Outputs
+      const flowEl = document.getElementById('calc-peak-flow');
+      const fillEl = document.getElementById('calc-fill-pct');
+      const badgeEl = document.getElementById('calc-risk-badge');
+      const recEl = document.getElementById('calc-recommendation');
+
+      if (flowEl) flowEl.textContent = `${peakFlow} м³/с`;
+      if (fillEl) fillEl.textContent = `${fillPercentage}%`;
+
+      if (badgeEl && recEl) {
+        badgeEl.className = 'risk-badge';
+        if (fillPercentage < 65) {
+          badgeEl.classList.add('risk-low');
+          badgeEl.textContent = 'ХЭВИЙН ТҮВШИН';
+          recEl.textContent = `Шар усны үерийн ачаалал хоолойн нэвтрүүлэх чадварын аюулгүй хязгаарт (${fillPercentage}%) байна. Ердийн хаваржилтын үзлэг хийхэд хангалттай.`;
+        } else if (fillPercentage <= 95) {
+          badgeEl.classList.add('risk-medium');
+          badgeEl.textContent = 'АНХААРУУЛАХ ТҮВШИН';
+          recEl.textContent = `Шар усны хайллага хоолойн хүчин чадлын ${fillPercentage}%-д хүрсэн байна. Мөс, хагшаас бөглөрөхөөс сэргийлж амсрыг цэвэрлэх, шуурхай хяналтын баг томилохыг зөвлөж байна.`;
+        } else {
+          badgeEl.classList.add('risk-high');
+          badgeEl.textContent = 'ОНЦ АЮУЛТАЙ ТҮВШИН';
+          recEl.textContent = `АНХААР: Тооцоолсон оргил урсац (${peakFlow} м³/с) нь хоолойн багтаамжаас давж (${fillPercentage}%), төмөр замын далан усанд автах ноцтой эрсдэлтэй! Нэмэлт ус халиагуур нээх, шуурхай хамгаалалт авах шаардлагатай!`;
+        }
+      }
+
+      // Persist inputs to state
+      appState.floodInputs = { snowDepth: snow, tempRate: temp, soilFrost: frost, culvertCap: culvertCap };
+    }
+
+    function restoreFloodModelInputs(data) {
+      if (!data) return;
+      const snowEl = document.getElementById('calc-snow-depth');
+      const tempEl = document.getElementById('calc-temp-rate');
+      const frostEl = document.getElementById('calc-soil-frost');
+      const capEl = document.getElementById('calc-culvert-cap');
+
+      if (snowEl && data.snowDepth) snowEl.value = data.snowDepth;
+      if (tempEl && data.tempRate) tempEl.value = data.tempRate;
+      if (frostEl && data.soilFrost) frostEl.value = data.soilFrost;
+      if (capEl && data.culvertCap) capEl.value = data.culvertCap;
+
+      updateFloodModel();
+    }
+
+    // ==========================================
+    // 7. BYLAWS ACCORDION
+    // ==========================================
+    function toggleBylaw(btn) {
+      const parent = btn.closest('.bylaw-item');
+      if (!parent) return;
+      parent.classList.toggle('open');
+    }
+
+    // ==========================================
+    // 8. MEMBERSHIP APPLICATION & PERSISTENCE
+    // ==========================================
+    function selectTier(tierName) {
+      const tierInput = document.getElementById('form-tier-val');
+      if (tierInput) tierInput.value = tierName;
+
+      // Update Card Visuals
+      const cards = document.querySelectorAll('.tier-card');
+      cards.forEach(card => card.classList.remove('selected'));
+
+      if (tierName.includes('Үндсэн')) {
+        const c = document.getElementById('tier-regular');
+        if (c) c.classList.add('selected');
+      } else if (tierName.includes('Залуу')) {
+        const c = document.getElementById('tier-young');
+        if (c) c.classList.add('selected');
+      } else if (tierName.includes('байгууллагын')) {
+        const c = document.getElementById('tier-corp');
+        if (c) c.classList.add('selected');
+      } else {
+        const c = document.getElementById('tier-honor');
+        if (c) c.classList.add('selected');
+      }
+
+      updateLiveCard();
+    }
+
+    function updateLiveCard() {
+      const lname = document.getElementById('m-lastname')?.value || '';
+      const fname = document.getElementById('m-firstname')?.value || '';
+      const workplace = document.getElementById('m-workplace')?.value || 'Судалгааны байгууллага';
+      const field = document.getElementById('m-field')?.value || 'Цаг уур, орчны судлаач';
+      const tier = document.getElementById('form-tier-val')?.value || 'Үндсэн гишүүн';
+
+      const nameDisp = document.getElementById('card-name-disp');
+      const roleDisp = document.getElementById('card-role-disp');
+      const orgDisp = document.getElementById('card-org-disp');
+
+      const fullName = (lname || fname) ? `${lname} ${fname}`.trim() : 'Таны нэр энд харагдана';
+      if (nameDisp) nameDisp.textContent = fullName;
+      if (roleDisp) roleDisp.textContent = `${tier.split('(')[0].trim()} | ${field}`;
+      if (orgDisp) orgDisp.textContent = `Байгууллага: ${workplace}`;
+    }
+
+    async function handleMembershipSubmit(event) {
+      event.preventDefault();
+
+      const appData = {
+        lastname: document.getElementById('m-lastname')?.value || '',
+        firstname: document.getElementById('m-firstname')?.value || '',
+        reg: document.getElementById('m-reg')?.value || '',
+        phone: document.getElementById('m-phone')?.value || '',
+        email: document.getElementById('m-email')?.value || '',
+        workplace: document.getElementById('m-workplace')?.value || '',
+        field: document.getElementById('m-field')?.value || '',
+        bio: document.getElementById('m-bio')?.value || '',
+        tier: document.getElementById('form-tier-val')?.value || 'Үндсэн гишүүн',
+        submittedAt: new Date().toISOString(),
+        status: 'Баталгаажсан'
+      };
+
+      appState.savedApplication = appData;
+
+      // Save state via Gemini Notebook Shim API
+      if (window.notebookAppApi && window.notebookAppApi.setAppState) {
+        try {
+          await window.notebookAppApi.setAppState({
+            savedApplication: appData,
+            floodInputs: appState.floodInputs
+          });
+        } catch (err) {
+          console.warn('Persist error:', err);
+        }
+      }
+
+      // Show Feedback
+      const feedback = document.getElementById('form-feedback');
+      if (feedback) {
+        feedback.className = 'status-msg-box success';
+        feedback.innerHTML = `✓ Танд баярлалаа! Таны <strong>${appData.tier.split('(')[0].trim()}</strong> өргөдөл хүлээн авагдаж, системд бүртгэгдлээ.`;
+        feedback.style.display = 'inline-flex';
+      }
+
+      showSavedBanner(appData);
+    }
+
+    async function saveApplicationDraft() {
+      const draftData = {
+        lastname: document.getElementById('m-lastname')?.value || '',
+        firstname: document.getElementById('m-firstname')?.value || '',
+        reg: document.getElementById('m-reg')?.value || '',
+        phone: document.getElementById('m-phone')?.value || '',
+        email: document.getElementById('m-email')?.value || '',
+        workplace: document.getElementById('m-workplace')?.value || '',
+        field: document.getElementById('m-field')?.value || '',
+        bio: document.getElementById('m-bio')?.value || '',
+        tier: document.getElementById('form-tier-val')?.value || 'Үндсэн гишүүн',
+        submittedAt: new Date().toISOString(),
+        status: 'Ноорог'
+      };
+
+      appState.savedApplication = draftData;
+
+      if (window.notebookAppApi && window.notebookAppApi.setAppState) {
+        try {
+          await window.notebookAppApi.setAppState({
+            savedApplication: draftData,
+            floodInputs: appState.floodInputs
+          });
+        } catch (err) {
+          console.warn('Draft save error:', err);
+        }
+      }
+
+      const feedback = document.getElementById('form-feedback');
+      if (feedback) {
+        feedback.className = 'status-msg-box draft';
+        feedback.innerHTML = `ℹ Өргөдлийн ноорог амжилттай хадгалагдлаа.`;
+        feedback.style.display = 'inline-flex';
+      }
+
+      showSavedBanner(draftData);
+    }
+
+    function showSavedBanner(data) {
+      const banner = document.getElementById('saved-state-banner');
+      const text = document.getElementById('saved-summary-text');
+      if (!banner || !text) return;
+
+      const dateStr = data.submittedAt ? new Date(data.submittedAt).toLocaleDateString('mn-MN') : '';
+      text.textContent = `${data.firstname} (${data.tier.split('(')[0].trim()}) - Төлөв: ${data.status} [${dateStr}]`;
+      banner.style.display = 'block';
+    }
+
+    function restoreFormFromState(data) {
+      if (!data) return;
+      if (document.getElementById('m-lastname')) document.getElementById('m-lastname').value = data.lastname || '';
+      if (document.getElementById('m-firstname')) document.getElementById('m-firstname').value = data.firstname || '';
+      if (document.getElementById('m-reg')) document.getElementById('m-reg').value = data.reg || '';
+      if (document.getElementById('m-phone')) document.getElementById('m-phone').value = data.phone || '';
+      if (document.getElementById('m-email')) document.getElementById('m-email').value = data.email || '';
+      if (document.getElementById('m-workplace')) document.getElementById('m-workplace').value = data.workplace || '';
+      if (document.getElementById('m-field') && data.field) document.getElementById('m-field').value = data.field;
+      if (document.getElementById('m-bio')) document.getElementById('m-bio').value = data.bio || '';
+      if (data.tier) selectTier(data.tier);
+
+      updateLiveCard();
+      showSavedBanner(data);
+    }
+
+    async function clearSavedDraft() {
+      appState.savedApplication = null;
+      if (window.notebookAppApi && window.notebookAppApi.setAppState) {
+        try {
+          await window.notebookAppApi.setAppState({
+            savedApplication: null,
+            floodInputs: appState.floodInputs
+          });
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+
+      const banner = document.getElementById('saved-state-banner');
+      if (banner) banner.style.display = 'none';
+
+      const feedback = document.getElementById('form-feedback');
+      if (feedback) feedback.style.display = 'none';
+    }
+
+    // ==========================================
+    // 9. INQUIRY FORM HANDLER
+    // ==========================================
+    function handleInquirySubmit(event) {
+      event.preventDefault();
+      const feedback = document.getElementById('inquiry-feedback');
+      if (feedback) {
+        feedback.className = 'status-msg-box success';
+        feedback.textContent = `✓ Таны хүсэлт хүлээн авагдлаа. Бид тун удахгүй холбогдох болно.`;
+        feedback.style.display = 'inline-flex';
+      }
+      const form = document.getElementById('inquiry-form');
+      if (form) form.reset();
+    }
+  </script>
 </body>
 </html>
