@@ -1600,6 +1600,81 @@
         margin: 0 auto var(--space-md);
       }
     }
+
+    /* Founding Leaders Tribute Section */
+    .founders-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+    }
+
+    .founder-profile-card {
+      display: grid;
+      grid-template-columns: 165px 1fr;
+      gap: var(--space-lg);
+      background: #faf8f2;
+      border: 1px solid var(--outline-variant);
+      border-left: 3px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      align-items: start;
+    }
+
+    .founder-photo-box {
+      width: 165px;
+      background: #ffffff;
+      border: 1px solid var(--outline-variant);
+      padding: 5px;
+      border-radius: var(--rounded);
+      box-shadow: 0 2px 8px rgba(20, 33, 61, 0.06);
+    }
+
+    .founder-photo-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .founder-bio-content h4 {
+      font-family: var(--font-headline);
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .founder-role-tag {
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--tertiary);
+      margin-bottom: var(--space-sm);
+      display: block;
+    }
+
+    .founder-bio-content p {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--on-surface);
+      margin-bottom: var(--space-sm);
+      text-align: justify;
+    }
+
+    .founder-bio-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 640px) {
+      .founder-profile-card {
+        grid-template-columns: 1fr;
+      }
+      .founder-photo-box {
+        width: 150px;
+        margin: 0 auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1769,7 +1844,7 @@
 
       <div class="greeting-body-flow">
         <div class="greeting-portrait-wrap">
-          <img src="president.jpg" alt="Dr. Batbayar Jadamba (Ph.D), President of the Mongolian Hydrometeorological Society">
+          <img src="JB.jpg" alt="Dr. Batbayar Jadamba (Ph.D), President of the Mongolian Hydrometeorological Society">
         </div>
 
         <div class="greeting-salutation">
@@ -1830,6 +1905,51 @@
                 <li><strong>4. Generational Continuity & Professional Growth:</strong> Strengthening ties between senior and younger generations, training young specialists, and protecting their collective interests.</li>
                 <li><strong>5. Multilateral Cooperation:</strong> Partnering with governmental and international bodies to implement strategic projects on climate change, desertification, and adaptation.</li>
               </ul>
+            </div>
+          </div>
+
+          <!-- Founding Leaders & Historical Figures -->
+          <div class="leaf-panel">
+            <span class="kicker">FOUNDING LEADERS & HONORARY FIGURES</span>
+            <h3 class="leaf-panel-inner-title">Founders & Pioneers of the Society</h3>
+            <p style="font-size: 0.88rem; color: var(--on-surface-variant);">
+              Distinguished scientists and statesmen who initiated and laid the foundation of the Mongolian Hydrometeorological Society in 2002:
+            </p>
+
+            <div class="founders-grid">
+              <!-- Prof. Ts. Adyasuren -->
+              <article class="founder-profile-card">
+                <div class="founder-photo-box">
+                  <img src="Adja.png" alt="Doctor (Ph.D), Professor Ts. Adyasuren">
+                </div>
+                <div class="founder-bio-content">
+                  <h4>Doctor (Ph.D), Professor Ts. Adyasüren</h4>
+                  <span class="founder-role-tag">Founder of the Mongolian Hydrometeorological Society, First President, Merited Environmentalist</span>
+                  <p>
+                    From 1996 to 2000, he served as a Member of the Government of Mongolia, Minister of Nature and the Environment, and Advisor to the Minister. Since 1999, he has served as Director of the National Ozone Office under the Ministry of Environment, and since 2000, as the Founder and Rector of the “Eco-Asia” Institute of Environment and Management.
+                  </p>
+                  <p>
+                    From 1990 to 1992, he was elected and served as a Deputy of the People’s Great Khural of the Mongolian People’s Republic (MPR) and Vice Chairman of the People’s Great Khural.
+                  </p>
+                </div>
+              </article>
+
+              <!-- Dr. D. Tuvdendorj -->
+              <article class="founder-profile-card">
+                <div class="founder-photo-box">
+                  <img src="Tuv.png" alt="Doctor (Ph.D), D. Tuvdendorj">
+                </div>
+                <div class="founder-bio-content">
+                  <h4>Doctor (Ph.D), D. Tuvdendorj</h4>
+                  <span class="founder-role-tag">Founder of the Mongolian Hydrometeorological Society, First Vice President, Merited Environmentalist</span>
+                  <p>
+                    From 1962 to 1981, he served as Head of the Hydrometeorological Service Administration under the Council of Ministers of the MPR; from 1981 to 1985, as Ambassador Extraordinary and Plenipotentiary of the MPR to Algeria; from 1985 to 1987, as Referent at the Administrative Office of the Council of Ministers of the MPR; and from 2002, as Vice President of the Mongolian Hydrometeorological Society.
+                  </p>
+                  <p>
+                    From 1970 to 1975, he served as Vice President and Acting President of the World Meteorological Organization (WMO) Regional Association II (Asia), as well as a Member of the WMO Executive Council.
+                  </p>
+                </div>
+              </article>
             </div>
           </div>
 
