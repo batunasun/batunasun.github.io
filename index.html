@@ -617,19 +617,11 @@
       position: relative;
     }
 
-    .symbol-svg-interactive svg {
-      width: 260px;
-      height: 260px;
+    .symbol-svg-interactive img {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
       filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
-    }
-
-    .interactive-part {
-      cursor: pointer;
-      transition: filter var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-    }
-
-    .interactive-part:hover, .interactive-part.active {
-      filter: drop-shadow(0 0 6px #b08d57);
     }
 
     .symbol-buttons-bar {
@@ -1553,22 +1545,9 @@
   <header class="site-nav-wrapper">
     <div class="site-nav-inner">
       <a href="#home" class="brand-group" aria-label="Mongolian Hydrometeorological Society Home">
-        <!-- SVG Emblem Mark -->
+        <!-- Logo Mark -->
         <div class="brand-logo-mark">
-          <img viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
-            <circle cx="50" cy="50" r="48" fill="#14213d" stroke="#b08d57" stroke-width="2"/>
-            <circle cx="50" cy="50" r="40" fill="#ffffff" stroke="#0077b6" stroke-width="1.5"/>
-            <!-- Compass 8 points -->
-            <path d="M50 4 L53 10 L50 7 L47 10 Z" fill="#b08d57"/>
-            <path d="M50 96 L53 90 L50 93 L47 90 Z" fill="#b08d57"/>
-            <path d="M4 50 L10 53 L7 50 L10 47 Z" fill="#b08d57"/>
-            <path d="M96 50 L90 53 L93 50 L90 47 Z" fill="#b08d57"/>
-            <!-- 3 Chandmani Melmii Jewels -->
-            <path d="M50 22 C42 34 42 43 50 50 C58 43 58 34 50 22 Z" fill="#0077b6"/>
-            <path d="M30 62 C32 48 40 46 50 50 C44 58 38 66 30 62 Z" fill="#023e8a"/>
-            <path d="M70 62 C68 48 60 46 50 50 C56 58 62 66 70 62 Z" fill="#0096c7"/>
-            <circle cx="50" cy="50" r="4" fill="#f7f4ec" stroke="#b08d57" stroke-width="1"/>
-          </img>
+          <img src="logo.png" alt="MonMetSoc Logo" style="width: 48px; height: 48px; object-fit: contain;">
         </div>
         <div class="brand-text-block">
           <span class="brand-title">Mongolian Hydrometeorological Society</span>
@@ -1630,90 +1609,7 @@
       <!-- Hero Emblem Interactive Showcase -->
       <div class="hero-emblem-showcase">
         <div class="hero-emblem-svg-container" id="hero-emblem-svg-wrap">
-          <!-- Highly Accurate Vector Reproduction of SOURCE_IMAGE_1 -->
-          <img viewBox="0 0 300 300" width="100%" height="100%" aria-label="Official Emblem of the Mongolian Hydrometeorological Society">
-            <!-- Drop Shadow definition -->
-            <defs>
-              <filter id="emblem-glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
-              </filter>
-            </defs>
-
-            <!-- Outer Compass Directions (8 points) -->
-            <g id="compass-rays" fill="#b08d57" stroke="#8a6a35" stroke-width="0.8">
-              <!-- N -->
-              <polygon points="150,14 157,32 150,26 143,32"/>
-              <!-- S -->
-              <polygon points="150,286 157,268 150,274 143,268"/>
-              <!-- E -->
-              <polygon points="286,150 268,157 274,150 268,143"/>
-              <!-- W -->
-              <polygon points="14,150 32,157 26,150 32,143"/>
-              <!-- NE -->
-              <polygon points="246,54 233,70 236,64 228,63"/>
-              <!-- NW -->
-              <polygon points="54,54 70,63 64,64 67,70"/>
-              <!-- SE -->
-              <polygon points="246,246 228,237 236,236 233,230"/>
-              <!-- SW -->
-              <polygon points="54,246 67,230 64,236 70,237"/>
-            </g>
-
-            <!-- Dark Navy Outer Circular Band -->
-            <circle cx="150" cy="150" r="124" fill="#0d1b2a" stroke="#b08d57" stroke-width="2.5" filter="url(#emblem-glow)"/>
-
-            <!-- Circular Text Path Ring -->
-            <circle cx="150" cy="150" r="102" fill="none" stroke="#253858" stroke-width="1.5"/>
-
-            <path id="text-path-top" d="M 46,150 A 104,104 0 0,1 254,150" fill="none"/>
-            <path id="text-path-bottom" d="M 254,150 A 104,104 0 0,1 46,150" fill="none"/>
-
-            <text fill="#ffffff" font-family="'Inter', sans-serif" font-size="8.8" font-weight="700" letter-spacing="0.1em">
-              <textPath href="#text-path-top" startOffset="50%" text-anchor="middle">
-                МОНГОЛЫН УС ЦАГ УУРЫН НИЙГЭМЛЭГ
-              </textPath>
-            </text>
-            <text fill="#dfc89d" font-family="'Inter', sans-serif" font-size="7.6" font-weight="600" letter-spacing="0.14em">
-              <textPath href="#text-path-bottom" startOffset="50%" text-anchor="middle">
-                MONGOLIAN HYDROMETEOROLOGICAL SOCIETY
-              </textPath>
-            </text>
-
-            <!-- Inner White Ground Circle (True Pure Path) -->
-            <circle cx="150" cy="150" r="88" fill="#ffffff" stroke="#0077b6" stroke-width="3"/>
-
-            <!-- Atmospheric Outer Ring -->
-            <circle cx="150" cy="150" r="82" fill="none" stroke="#90e0ef" stroke-width="1.5" stroke-dasharray="2,3"/>
-
-            <!-- Center Jewel Base (Chandmani Three Eyes) -->
-            <g id="chandmani-three-eyes">
-              <!-- Top Eye / Leaf (Atmosphere - Sky Blue) -->
-              <path d="M 150,82 C 126,114 126,134 150,150 C 174,134 174,114 150,82 Z"
-                    fill="#0096c7" stroke="#023e8a" stroke-width="1.2"/>
-              <!-- Inner shading vein -->
-              <path d="M 150,88 C 142,112 144,128 150,146" fill="none" stroke="#caf0f8" stroke-width="1.5" stroke-linecap="round"/>
-
-              <!-- Left Eye / Leaf (Hydrosphere - Navy Blue) -->
-              <path d="M 92,184 C 98,148 122,142 150,150 C 134,174 116,194 92,184 Z"
-                    fill="#03045e" stroke="#023e8a" stroke-width="1.2"/>
-              <!-- Inner shading vein -->
-              <path d="M 98,180 C 112,160 126,154 146,151" fill="none" stroke="#48cae4" stroke-width="1.5" stroke-linecap="round"/>
-
-              <!-- Right Eye / Leaf (Biosphere & Land - Azure Blue) -->
-              <path d="M 208,184 C 202,148 178,142 150,150 C 166,174 184,194 208,184 Z"
-                    fill="#0077b6" stroke="#023e8a" stroke-width="1.2"/>
-              <!-- Inner shading vein -->
-              <path d="M 202,180 C 188,160 174,154 154,151" fill="none" stroke="#ade8f4" stroke-width="1.5" stroke-linecap="round"/>
-
-              <!-- Central Pivot / Eye of Wisdom Core -->
-              <circle cx="150" cy="150" r="9" fill="#ffffff" stroke="#b08d57" stroke-width="2"/>
-              <circle cx="150" cy="150" r="4.5" fill="#14213d"/>
-            </g>
-
-            <!-- Decorative Star Dividers -->
-            <polygon points="40,150 42,152 40,154 38,152" fill="#b08d57"/>
-            <polygon points="260,150 262,152 260,154 258,152" fill="#b08d57"/>
-          </img>
+          <img src="logo.png" alt="Official Emblem of the Mongolian Hydrometeorological Society" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="emblem-caption-title">Three-Eyed Chandmani Jewel — Society Emblem</div>
         <div class="emblem-caption-sub">
@@ -1981,48 +1877,11 @@
 
       <div class="symbol-explorer">
         <div class="symbol-layout">
-          <!-- Interactive SVG Mark -->
+          <!-- Emblem Image -->
           <div class="symbol-svg-interactive">
-            <img viewBox="0 0 260 260" width="220" height="220" aria-label="Chandmani Symbol">
-              <!-- Compass Rays Outer (click to explore) -->
-              <g id="svg-part-compass" class="interactive-part" onclick="selectSymbolPart('compass')">
-                <polygon points="130,10 136,26 130,20 124,26" fill="#b08d57"/>
-                <polygon points="130,250 136,234 130,240 124,234" fill="#b08d57"/>
-                <polygon points="250,130 234,136 240,130 234,124" fill="#b08d57"/>
-                <polygon points="10,130 26,136 20,130 26,124" fill="#b08d57"/>
-                <polygon points="214,46 202,60 205,55 198,54" fill="#b08d57"/>
-                <polygon points="46,46 60,54 55,55 58,60" fill="#b08d57"/>
-                <polygon points="214,214 198,206 205,205 202,200" fill="#b08d57"/>
-                <polygon points="46,214 58,200 55,205 60,206" fill="#b08d57"/>
-              </g>
-
-              <!-- Outer Navy Ring (click to explore) -->
-              <circle id="svg-part-ring" class="interactive-part" cx="130" cy="130" r="108" fill="#14213d" stroke="#b08d57" stroke-width="2" onclick="selectSymbolPart('ring')"/>
-
-              <!-- White Base Ground (click to explore) -->
-              <circle id="svg-part-base" class="interactive-part" cx="130" cy="130" r="82" fill="#ffffff" stroke="#0077b6" stroke-width="2.5" onclick="selectSymbolPart('base')"/>
-
-              <!-- Atmospheric Halo -->
-              <circle cx="130" cy="130" r="76" fill="none" stroke="#90e0ef" stroke-width="1.2" stroke-dasharray="2,2"/>
-
-              <!-- Top Eye: Air / Sky (click to explore) -->
-              <path id="svg-part-eye-air" class="interactive-part" d="M 130,65 C 108,94 108,114 130,130 C 152,114 152,94 130,65 Z"
-                    fill="#0096c7" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('air')"/>
-
-              <!-- Left Eye: Water (click to explore) -->
-              <path id="svg-part-eye-water" class="interactive-part" d="M 76,162 C 82,128 104,122 130,130 C 114,152 98,172 76,162 Z"
-                    fill="#03045e" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('water')"/>
-
-              <!-- Right Eye: Earth & Land (click to explore) -->
-              <path id="svg-part-eye-land" class="interactive-part" d="M 184,162 C 178,128 156,122 130,130 C 146,152 162,172 184,162 Z"
-                    fill="#0077b6" stroke="#023e8a" stroke-width="1.2" onclick="selectSymbolPart('land')"/>
-
-              <!-- Center Point: Wisdom (click to explore) -->
-              <circle id="svg-part-center" class="interactive-part" cx="130" cy="130" r="8" fill="#ffffff" stroke="#b08d57" stroke-width="2" onclick="selectSymbolPart('wisdom')"/>
-              <circle cx="130" cy="130" r="3.5" fill="#14213d"/>
-            </img>
+            <img src="logo.png" alt="Chandmani Symbol">
             <span style="font-size:0.75rem; color:var(--tertiary); margin-top:8px; font-weight:600;">
-              Click on the emblem elements to view details
+              Select a button on the right to view details
             </span>
           </div>
 
@@ -2845,13 +2704,6 @@
       const activeBtn = document.getElementById(`btn-sym-${partKey}`);
       if (activeBtn) activeBtn.classList.add('active');
 
-      // Update SVG part styles
-      const parts = document.querySelectorAll('.interactive-part');
-      parts.forEach(p => p.classList.remove('active'));
-      const activeSvgPart = document.getElementById(`svg-part-${partKey}`) ||
-                            document.getElementById(`svg-part-eye-${partKey}`);
-      if (activeSvgPart) activeSvgPart.classList.add('active');
-
       // Re-initialize Lucide Icons for dynamic icon
       if (window.lucide && window.lucide.createIcons) {
         window.lucide.createIcons();
@@ -2975,17 +2827,13 @@
         else dispFrost.textContent = `Light Frost (High Infiltration)`;
       }
 
-      // Hydrometeorological formula developed for Mongolian conditions:
-      // Peak runoff Q = Area_coeff * (Snow_water_equiv * Melt_intensity * Frost_runoff_coeff)
-      // Reference standard: 1 cm snow ~ 2.2 mm water equivalent in high density spring crust
-      const snowWaterEq = snow * 2.2; // mm
-      const meltIntensity = temp * 1.8; // mm/day
-      const baseAreaRunoffFactor = 0.055; // for typical railway catchment micro-basin
+      const snowWaterEq = snow * 2.2;
+      const meltIntensity = temp * 1.8;
+      const baseAreaRunoffFactor = 0.055;
 
       const peakFlow = (snowWaterEq * (meltIntensity / 24) * frost * baseAreaRunoffFactor).toFixed(1);
       const fillPercentage = ((parseFloat(peakFlow) / culvertCap) * 100).toFixed(1);
 
-      // Update Outputs
       const flowEl = document.getElementById('calc-peak-flow');
       const fillEl = document.getElementById('calc-fill-pct');
       const badgeEl = document.getElementById('calc-risk-badge');
@@ -3011,7 +2859,6 @@
         }
       }
 
-      // Persist inputs to state
       appState.floodInputs = { snowDepth: snow, tempRate: temp, soilFrost: frost, culvertCap: culvertCap };
     }
 
@@ -3046,7 +2893,6 @@
       const tierInput = document.getElementById('form-tier-val');
       if (tierInput) tierInput.value = tierName;
 
-      // Update Card Visuals
       const cards = document.querySelectorAll('.tier-card');
       cards.forEach(card => card.classList.remove('selected'));
 
@@ -3103,7 +2949,6 @@
 
       appState.savedApplication = appData;
 
-      // Save state via Gemini Notebook Shim API
       if (window.notebookAppApi && window.notebookAppApi.setAppState) {
         try {
           await window.notebookAppApi.setAppState({
@@ -3115,7 +2960,6 @@
         }
       }
 
-      // Show Feedback
       const feedback = document.getElementById('form-feedback');
       if (feedback) {
         feedback.className = 'status-msg-box success';
@@ -3227,5 +3071,3 @@
   </script>
 </body>
 </html>
-
-```
