@@ -1513,6 +1513,93 @@
         scroll-behavior: auto !important;
       }
     }
+
+    /* President's Greeting Section */
+    .greeting-panel {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .greeting-header-title {
+      text-align: center;
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      color: var(--primary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: var(--hairline);
+    }
+
+    .greeting-body-flow {
+      font-size: var(--body-size);
+      line-height: 1.75;
+      color: var(--on-surface);
+    }
+
+    .greeting-portrait-wrap {
+      float: left;
+      width: 210px;
+      margin: 0 var(--space-lg) var(--space-md) 0;
+      border: 1px solid var(--outline-variant);
+      border-top: 3px solid var(--outline);
+      background: #faf8f2;
+      padding: 6px;
+      border-radius: var(--rounded);
+    }
+
+    .greeting-portrait-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .greeting-salutation {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-sm);
+      font-size: 1.05rem;
+    }
+
+    .greeting-body-flow p {
+      text-align: justify;
+      margin-bottom: var(--space-md);
+    }
+
+    .greeting-signature {
+      clear: both;
+      text-align: right;
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: var(--hairline);
+    }
+
+    .greeting-sign-name {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .greeting-sign-role {
+      font-size: 0.88rem;
+      color: var(--on-surface-variant);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .greeting-portrait-wrap {
+        float: none;
+        width: 180px;
+        margin: 0 auto var(--space-md);
+      }
+    }
   </style>
 </head>
 <body>
@@ -1557,6 +1644,7 @@
 
       <nav aria-label="Main Menu">
         <ul class="nav-links">
+          <li><a href="#greeting" class="nav-link">Greeting</a></li>
           <li><a href="#about" class="nav-link">About Us</a></li>
           <li><a href="#emblem" class="nav-link">Symbolism</a></li>
           <li><a href="#projects" class="nav-link">Projects & Research</a></li>
@@ -1671,6 +1759,41 @@
 
   <!-- Main Body Content Flow -->
   <main class="content-container">
+
+    <!-- PRESIDENT'S GREETING -->
+    <section id="greeting" class="greeting-panel" aria-label="President's Greeting">
+      <div style="text-align: center;">
+        <span class="kicker">MESSAGE FROM THE PRESIDENT</span>
+      </div>
+      <h2 class="greeting-header-title">President’s Greeting</h2>
+
+      <div class="greeting-body-flow">
+        <div class="greeting-portrait-wrap">
+          <img src="president.png" alt="Dr. Batbayar Jadamba (Ph.D), President of the Mongolian Hydrometeorological Society">
+        </div>
+
+        <div class="greeting-salutation">
+          Distinguished Scientists and Researchers, Colleagues, and Honored Guests:
+        </div>
+
+        <p>
+          On behalf of all members, the Academic Council, and the Board of Directors of the Mongolian Hydrometeorological Society, I extend my warmest and most sincere greetings to you as you visit our newly updated official website (monmetsociety.org)! In an era of intensifying global climate change and increasingly frequent extreme weather events, accurate and reliable hydrometeorological and environmental monitoring data, alongside professional advisory services, has become a decisive factor in ensuring national sustainable development and public safety.
+        </p>
+
+        <p>
+          Since its establishment in September 2002, our Society has operated steadily for 24 years, uniting the intellectual strength of scientists and specialists across the sector. The four cardinal directions and eight intercardinal points of the compass, together with the “Three-Eyed Chandmani Jewel” in our official emblem, symbolize the light of scientific intellect perceiving the past, present, and future of the atmosphere, water, and earth, while embodying our high ethical commitment to conducting research and analysis along an independent, true, and pure path.
+        </p>
+
+        <p>
+          This renewed digital platform will serve as an open repository for hydrometeorological and environmental research, a forum for scientific conferences and discussions, and a bridge for creative collaboration among our members. Moving forward, we remain ever open to introducing advanced solutions in satellite remote sensing and artificial intelligence, and to partnering with governmental bodies, international organizations, and private-sector partners. Let us strive together for the harmony of Mongolia’s mother nature and sustainable development!
+        </p>
+      </div>
+
+      <div class="greeting-signature">
+        <div class="greeting-sign-name">Batbayar JADAMBA (Ph.D)</div>
+        <div class="greeting-sign-role">President of the Mongolian Hydrometeorological Society</div>
+      </div>
+    </section>
 
     <!-- SECTION 1: ABOUT US & HISTORY -->
     <section id="about">
